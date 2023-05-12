@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.application).version("8.0.1")
     alias(libs.plugins.jetbrains.kotlin)
