@@ -2,7 +2,8 @@ package com.geekydroid.materialclock.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.geekydroid.materialclock.R
+import com.geekydroid.materialclock.R as appResources
+import com.geekydroid.materialclock.designsystem.R as designSystemResource
 
 enum class BottomNavigationItems(
     @StringRes val itemName: Int,
@@ -11,23 +12,22 @@ enum class BottomNavigationItems(
 ) {
 
     ALARM(
-        R.string.alarm,
+        com.geekydroid.materialclock.R.string.alarm,
         "alarm",
-        R.drawable.baseline_access_alarm_24
+        designSystemResource.drawable.baseline_access_alarm_24
     ),
 
     TIMER(
-        R.string.timer,
+        appResources.string.timer,
         "timer",
-        R.drawable.baseline_hourglass_24
+        designSystemResource.drawable.baseline_hourglass_24
     ),
 
     STOPWATCH(
-        R.string.stopwatch,
+        appResources.string.stopwatch,
         "stopwatch",
-        R.drawable.baseline_timer_24
+        designSystemResource.drawable.baseline_timer_24
     ),
-
 
 
 }

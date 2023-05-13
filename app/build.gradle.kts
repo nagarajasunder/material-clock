@@ -43,6 +43,7 @@ android {
 dependencies {
 
 //    implementation("androidx.core:core-ktx:1.8.0")
+    implementation(project(":designsystem"))
     implementation(project(":timer"))
     implementation(project(":stopwatch"))
     implementation(project(":alarm"))

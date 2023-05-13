@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.example.compose.md_theme_dark_primaryContainer
+import com.geekydroid.materialclock.designsystem.theme.md_theme_dark_primaryContainer
 import com.geekydroid.materialclock.navigation.BottomNavigationItems
 import com.geekydroid.materialclock.navigation.McNavHost
 
@@ -45,7 +45,7 @@ fun McBottomBar(
     navigateToTopLevelDestination: (BottomNavigationItems) -> Unit
 ) {
     NavigationBar {
-        bottomNavItems.forEachIndexed { index, bottomNavItem ->
+        bottomNavItems.forEach { bottomNavItem ->
             NavigationBarItem(
                 selected = currentDestination.isTopLevelDestinationInStack(bottomNavItem),
                 onClick = { navigateToTopLevelDestination(bottomNavItem) },

@@ -41,6 +41,7 @@ android {
 
 dependencies {
 
+    implementation(project(":designsystem"))
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.material.three)
     implementation(libs.androidx.activity.compose)
@@ -53,4 +54,6 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.androidx.compose.ui.test)
     debugImplementation(libs.androidx.compose.ui.testManifest)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
 }
