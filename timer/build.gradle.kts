@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.geekydroid.materialclock.stopwatch"
+    namespace = "com.geekydroid.materialclock.timer"
     compileSdk = 33
 
     defaultConfig {

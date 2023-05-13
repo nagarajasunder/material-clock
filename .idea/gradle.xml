@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/alarm" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/stopwatch" />
+            <option value="$PROJECT_DIR$/timer" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -1,7 +1,8 @@
-package com.geekydroid.materialclock
+package com.geekydroid.materialclock.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.geekydroid.materialclock.R
 
 enum class BottomNavigationItems(
     @StringRes val itemName: Int,

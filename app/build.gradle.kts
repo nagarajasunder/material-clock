@@ -43,6 +43,9 @@ android {
 dependencies {
 
 //    implementation("androidx.core:core-ktx:1.8.0")
+    implementation(project(":timer"))
+    implementation(project(":stopwatch"))
+    implementation(project(":alarm"))
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.material.three)
     implementation(libs.androidx.activity.compose)
