@@ -15,5 +15,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Material Clock"
 include(":app")
-include(":alarm")
-include(":stopwatch")
