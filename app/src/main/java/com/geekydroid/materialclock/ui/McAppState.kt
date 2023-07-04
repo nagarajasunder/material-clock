@@ -10,9 +10,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.geekydroid.materialclock.navigation.BottomNavigationItems
-import com.geekydroid.materialclock.alarm.navigation.navigateToAlarmScreen
-import com.geekydroid.materialclock.stopwatch.navigation.navigateToStopwatchScreen
-import com.geekydroid.materialclock.timer.navigation.navigateToTimerScreen
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -32,19 +29,6 @@ data class McAppState(
             }
             launchSingleTop = true
             restoreState = true
-        }
-        when (destination) {
-            BottomNavigationItems.ALARM -> {
-                navHostController.navigateToAlarmScreen(topLevelNavOptions)
-            }
-
-            BottomNavigationItems.TIMER -> {
-                navHostController.navigateToTimerScreen(topLevelNavOptions)
-            }
-
-            BottomNavigationItems.STOPWATCH -> {
-                navHostController.navigateToStopwatchScreen(topLevelNavOptions)
-            }
         }
     }
 }

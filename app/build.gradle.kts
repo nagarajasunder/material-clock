@@ -1,8 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(libs.plugins.android.application).version("8.0.1")
     alias(libs.plugins.jetbrains.kotlin)
+    alias(libs.plugins.hilt).version("2.43")
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -26,11 +26,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -38,15 +38,16 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeVersion.get()
     }
+    packaging {
+        resources {
+            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            excludes.add("/META-INF/gradle/*")
+        }
+    }
 }
 
 dependencies {
 
-//    implementation("androidx.core:core-ktx:1.8.0")
-    implementation(project(":designsystem"))
-    implementation(project(":timer"))
-    implementation(project(":stopwatch"))
-    implementation(project(":alarm"))
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.material.three)
     implementation(libs.androidx.activity.compose)
@@ -57,10 +58,31 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.prefs)
     androidTestImplementation(libs.androidx.compose.ui.test)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.testManifest)
+    implementation(libs.joda.time)
 
-//    testImplementation("junit:junit:4.13.2")
-//    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    testImplementation(libs.android.test.exts)
+    testImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.google.truth.java.exts)
+    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.google.truth)
+    androidTestImplementation(libs.google.truth.java.exts)
+
+    testImplementation(libs.mock.test)
+    testImplementation(libs.mock.agent)
+
+    androidTestImplementation(libs.mock.test)
+    androidTestImplementation(libs.mock.agent)
 }
