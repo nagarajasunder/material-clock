@@ -12,6 +12,7 @@ data class AlarmUiData(
   val alarmTimeText:String = "",
   val alarmHour:Int = 0,
   val alarmMinute:Int = 0,
+  val alarmTimeInMills:Long = 0L,
   val alarmStatus: AlarmStatus = AlarmStatus.OFF,
   val alarmScheduledDays: String = Constants.WEEK_DAYS_UNSELECTED_DEFAULT_STR,
   val alarmScheduleText:String = "",

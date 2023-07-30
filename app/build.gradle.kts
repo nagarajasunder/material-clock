@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application).version("8.0.1")
     alias(libs.plugins.jetbrains.kotlin)
-    alias(libs.plugins.hilt).version("2.43")
+    alias(libs.plugins.hilt).version("2.47")
     alias(libs.plugins.kotlin.kapt)
 }
 
@@ -72,7 +72,7 @@ dependencies {
     testImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test)
-    testImplementation(libs.androidx.test.core)
+//    testImplementation(libs.androidx.test.core)
     testImplementation(libs.google.truth)
     testImplementation(libs.google.truth.java.exts)
     testImplementation(libs.kotlinx.coroutines.test)

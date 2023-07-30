@@ -1,5 +1,6 @@
 package com.geekydroid.materialclock.ui.alarm.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,10 +27,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
-/**
- * SharingStarted.WhileSubscribed(5_000)
- * We are using this to stay subscribed even during configuration changes
- */
+private const val TAG = "AlarmViewModel"
 
 @HiltViewModel
 class AlarmViewModel @Inject constructor(
@@ -66,9 +64,10 @@ class AlarmViewModel @Inject constructor(
 
     private fun collectTimeInputUpdates() {
         viewModelScope.launch {
-            datastoreManager.getBooleanValueOrNull(DatastoreKeyManager.SHOW_TIME_INPUT).collectLatest {newValue ->
-                showTimeInput = newValue
-            }
+            datastoreManager.getBooleanValueOrNull(DatastoreKeyManager.SHOW_TIME_INPUT)
+                .collectLatest { newValue ->
+                    showTimeInput = newValue
+                }
         }
     }
 
@@ -84,17 +83,23 @@ class AlarmViewModel @Inject constructor(
         }
     }
 
-    private fun addNewAlarm(alarmHour: Int, alarmMinute: Int) {
+    private fun addNewAlarm(calendar: Calendar) {
         viewModelScope.launch {
+            val alarmHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val alarmMinute = calendar.get(Calendar.MINUTE)
+            val isTomorrow = TimeUtils.isTomorrow(calendar.timeInMillis)
             val newAlarm =
                 AlarmUiData(
                     alarmLabel = "",
                     alarmTimeText = getAlarmTimeText(alarmHour, alarmMinute),
                     alarmHour = alarmHour,
                     alarmMinute = alarmMinute,
+                    alarmTimeInMills = calendar.timeInMillis,
                     alarmStatus = AlarmStatus.ON,
                     alarmScheduledDays = Constants.WEEK_DAYS_UNSELECTED_DEFAULT_STR,
-                    alarmScheduleText = resourceProvider.getString(R.string.not_scheduled_label),
+                    alarmScheduleText = if (isTomorrow) resourceProvider.getString(R.string.tomorrow) else resourceProvider.getString(
+                        R.string.today
+                    ),
                     pauseAlarmText = "",
                     alarmSnoozeText = "",
                     showAlarmDismissCta = false,
@@ -123,19 +128,20 @@ class AlarmViewModel @Inject constructor(
     }
 
 
-    override fun onAlarmTimeChanged(calendar: Calendar,showTimeInput:Boolean) {
+    override fun onAlarmTimeChanged(calendar: Calendar, showTimeInput: Boolean) {
         viewModelScope.launch {
-            datastoreManager.storeBooleanValue(DatastoreKeyManager.SHOW_TIME_INPUT,showTimeInput)
+            datastoreManager.storeBooleanValue(DatastoreKeyManager.SHOW_TIME_INPUT, showTimeInput)
         }
         viewModelScope.launch {
             _alarmScreenData.update {
                 it.copy(showSelectTimeDialog = false, alarmHour = 0, alarmMinute = 0)
             }
+            Log.d(TAG, "onAlarmTimeChanged: calendarMillis ${calendar.timeInMillis}")
+            if (TimeUtils.isPastTime(calendar.timeInMillis)) {
+                calendar.add(Calendar.DAY_OF_MONTH,1)
+            }
             if (alarmTimeIndex == -1) {
-                addNewAlarm(
-                    alarmHour = calendar.get(Calendar.HOUR_OF_DAY),
-                    alarmMinute = calendar.get(Calendar.MINUTE)
-                )
+                addNewAlarm(calendar = calendar)
             }
             /**
              * To Avail index out of bounds exception
@@ -146,7 +152,8 @@ class AlarmViewModel @Inject constructor(
                     alarmTimeText = getAlarmTimeText(
                         alarmHour = calendar.get(Calendar.HOUR_OF_DAY),
                         alarmMinute = calendar.get(Calendar.MINUTE)
-                    )
+                    ),
+                    alarmTimeInMills = calendar.timeInMillis
                 )
                 updateAlarmsList(selectedAlarm, alarmTimeIndex)
             }
@@ -233,7 +240,8 @@ class AlarmViewModel @Inject constructor(
     override fun onAlarmStatusChange(index: Int, newStatus: AlarmStatus) {
         viewModelScope.launch {
             var selectedAlarm = _alarms.value[index]
-            selectedAlarm = selectedAlarm.copy(alarmStatus = newStatus)
+            val alarmScheduledText = getAlarmScheduleText(newStatus,selectedAlarm.alarmTimeInMills)
+            selectedAlarm = selectedAlarm.copy(alarmStatus = newStatus, alarmScheduleText = alarmScheduledText)
             updateAlarmsList(selectedAlarm, index)
         }
     }
@@ -337,5 +345,19 @@ class AlarmViewModel @Inject constructor(
 
     private fun toggleAlarmTimeIndex(index: Int) {
         alarmTimeIndex = index
+    }
+
+    private fun getAlarmScheduleText(alarmStatus: AlarmStatus, timeInMillis: Long): String {
+        return when (alarmStatus) {
+            AlarmStatus.ON -> {
+                if (TimeUtils.isTomorrow(timeInMillis)) resourceProvider.getString(R.string.tomorrow) else resourceProvider.getString(
+                    R.string.today
+                )
+            }
+
+            AlarmStatus.OFF -> {
+                resourceProvider.getString(R.string.not_scheduled_label)
+            }
+        }
     }
 }
