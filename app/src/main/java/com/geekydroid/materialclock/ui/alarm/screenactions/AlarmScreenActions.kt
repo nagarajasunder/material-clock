@@ -17,4 +17,10 @@ interface AlarmScreenActions {
     fun onLabelValueConfirmed()
 
     fun onTimePickerDialogClosed()
+
+    fun onDatePickerDialogDismissed()
+
+    fun onDatePickerConfirmed(time:Long)
+
+    fun onDateRangePickerConfirmed(timePair:Pair<Long,Long>)
 }
