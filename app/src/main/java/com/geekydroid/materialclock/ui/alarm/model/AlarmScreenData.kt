@@ -10,8 +10,10 @@ data class AlarmScreenData(
     val labelValue: String,
     val showSelectTimeDialog: Boolean,
     val showTimeInput:Boolean,
-    val alarmHour: Int,
-    val alarmMinute: Int
+    val alarmTimeInMillis:Long,
+    val showDatePicker:Boolean,
+    val datePickerTitle:String,
+    val showDateRangePicker:Boolean
 ) {
 
     companion object {
@@ -20,8 +22,10 @@ data class AlarmScreenData(
             labelValue = "",
             showSelectTimeDialog = false,
             showTimeInput = false,
-            alarmHour = 0,
-            alarmMinute = 0
+            alarmTimeInMillis = 0L,
+            showDatePicker = false,
+            datePickerTitle = "",
+            showDateRangePicker = false
         )
     }
 

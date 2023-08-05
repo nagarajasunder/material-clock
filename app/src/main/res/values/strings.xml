@@ -9,8 +9,12 @@
     <string name="vibrate_label">Vibrate</string>
     <string name="not_scheduled_label">Not Scheduled</string>
     <string name="schedule_alarm_label">Schedule alarm</string>
-    <string name="ok_label">Ok</string>
+    <string name="ok_label">OK</string>
     <string name="cancel">Cancel</string>
     <string name="label">Label</string>
     <string name="select_time">Select Time</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="alarm_date_picker_title">Select the date of the %1s alarm</string>
+    <string name="scheduled_for">Scheduled For %1s</string>
 </resources>

@@ -41,6 +41,21 @@ enum class AlarmStatus {
     ON,
     OFF
 }
+enum class AlarmScheduleType {
+    /**
+     * @property ONCE -> Alarm Rings only once Today/Tomorrow
+     */
+    ONCE,
+    /**
+     * @property SCHEDULE_ONCE -> Alarm Rings on a particular date
+     */
+    SCHEDULE_ONCE,
+
+    /**
+     * @property REPEATED -> Alarm Rings in a repeatable manner (Every Sunday,Monday or Everyday)
+     */
+    REPEATED
+}
 
 /**
  * index
@@ -61,7 +76,7 @@ fun AlarmCard(
     alarmStatus: AlarmStatus,
     alarmScheduleDays:String,
     alarmScheduleText: String,
-    pauseAlarmText: String,
+    alarmScheduleType: AlarmScheduleType,
     vibrateStatus: Boolean,
     alarmExpanded: Boolean,
     onAddLabelClicked: () -> Unit,
@@ -78,10 +93,7 @@ fun AlarmCard(
 
     Card(modifier = modifier
         .fillMaxWidth()
-        .clip(MaterialTheme.shapes.extraLarge)
-        .clickable {
-            onCollapseClicked()
-        },
+        .clip(MaterialTheme.shapes.extraLarge),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
             containerColor = alarmCardContainerColor
@@ -188,12 +200,16 @@ fun AlarmCard(
                             )
                             Text(
                                 modifier = Modifier.padding(horizontal = 8.dp),
-                                text = pauseAlarmText.ifEmpty { stringResource(R.string.schedule_alarm_label) },
+                                text = stringResource(id = R.string.schedule_alarm_label),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
                         Icon(
-                            painter = painterResource(id = R.drawable.baseline_add_circle_outline_24),
+                            painter = when(alarmScheduleType) {
+                                AlarmScheduleType.ONCE -> painterResource(id = R.drawable.baseline_add_circle_outline_24)
+                                AlarmScheduleType.SCHEDULE_ONCE -> painterResource(id = R.drawable.baseline_remove_circle_outline_24)
+                                AlarmScheduleType.REPEATED -> painterResource(id = R.drawable.baseline_add_circle_outline_24)
+                            },
                             contentDescription = null
                         )
                     }
@@ -278,7 +294,7 @@ fun AlarmCardPreview() {
         alarmStatus = AlarmStatus.ON,
         alarmScheduleText = "Everyday",
         alarmScheduleDays = Constants.WEEK_DAYS_UNSELECTED_DEFAULT_STR,
-        pauseAlarmText = "",
+        alarmScheduleType = AlarmScheduleType.SCHEDULE_ONCE,
         vibrateStatus = false,
         alarmExpanded = expanded,
         onAddLabelClicked = { },

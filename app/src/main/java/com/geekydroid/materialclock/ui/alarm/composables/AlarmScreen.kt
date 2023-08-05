@@ -58,11 +58,17 @@ fun AlarmScreenContent(
                     )
                 } else if (alarmScreenData.showSelectTimeDialog) {
                     TimePickerDialogWrapper(
-                        initialHour = alarmScreenData.alarmHour,
-                        initialMinute = alarmScreenData.alarmMinute,
+                        initialTimeMillis = alarmScreenData.alarmTimeInMillis,
                         showPickerInitial = (!alarmScreenData.showTimeInput),
                         onConfirm = viewModel::onAlarmTimeChanged,
                         onCancel = viewModel::onTimePickerDialogClosed
+                    )
+                }
+                else if (alarmScreenData.showDatePicker) {
+                    DatePickerDialogWrapper(
+                        titleText = alarmScreenData.datePickerTitle,
+                        onDismissed = viewModel::onDatePickerDialogDismissed,
+                        onConfirmed = viewModel::onDatePickerConfirmed
                     )
                 }
             }
@@ -76,7 +82,7 @@ fun AlarmScreenContent(
                     alarmStatus = currentAlarmData.alarmStatus,
                     alarmScheduleText = currentAlarmData.alarmScheduleText,
                     alarmScheduleDays = currentAlarmData.alarmScheduledDays,
-                    pauseAlarmText = currentAlarmData.pauseAlarmText,
+                    alarmScheduleType = currentAlarmData.alarmScheduleType,
                     vibrateStatus = currentAlarmData.isAlarmVibrate,
                     alarmExpanded = currentAlarmData.isAlarmExpanded,
                     onAddLabelClicked = {

@@ -31,19 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.geekydroid.materialclock.R
+import com.geekydroid.materialclock.application.utils.TimeUtils
 import java.util.Calendar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialogWrapper(
-    initialHour: Int = 0,
-    initialMinute: Int = 0,
+    initialTimeMillis:Long = System.currentTimeMillis(),
     showPickerInitial: Boolean = true,
     onConfirm: (Calendar,Boolean) -> Unit,
     onCancel: () -> Unit
 ) {
-    val state = rememberTimePickerState(initialHour = initialHour, initialMinute = initialMinute)
+    val hourMinutePair = TimeUtils.getHourMinuteFromMillis(initialTimeMillis)
+    val state = rememberTimePickerState(initialHour = hourMinutePair.first, initialMinute = hourMinutePair.second)
     val showingPicker = remember { mutableStateOf(showPickerInitial) }
     val configuration = LocalConfiguration.current
 
