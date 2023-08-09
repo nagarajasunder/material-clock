@@ -9,16 +9,16 @@ import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
  */
 
 data class AlarmUiData(
-  val alarmLabel:String = "",
-  val alarmTimeText:String = "",
-  val alarmTimeInMills:Long = 0L,
-  val alarmDateInMillis:Long = 0L,
+  val alarmId: Int = 0,
+  val alarmLabel: String = "",
+  val alarmTimeText: String = "",
+  val alarmTimeInMills: Long = 0L,
+  val alarmDateInMillis: Long = 0L,
   val alarmStatus: AlarmStatus = AlarmStatus.OFF,
-  val alarmScheduleType:AlarmScheduleType = AlarmScheduleType.ONCE,
+  val alarmScheduleType: AlarmScheduleType = AlarmScheduleType.ONCE,
   val alarmScheduledDays: String = Constants.WEEK_DAYS_UNSELECTED_DEFAULT_STR,
-  val alarmScheduleText:String = "",
-  val alarmSnoozeText:String = "",
-  val showAlarmDismissCta:Boolean = false,
-  val isAlarmVibrate:Boolean = false,
-  val isAlarmExpanded:Boolean = true
+  val alarmScheduleText: String = "",
+  val alarmSnoozeText: String = "",
+  val showAlarmDismissCta: Boolean = false,
+  val isAlarmVibrate: Boolean = false
 )

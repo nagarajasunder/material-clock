@@ -26,7 +26,7 @@ fun AlarmScreenContent(
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
 
-    val alarmData by viewModel.alarms.collectAsStateWithLifecycle(initialValue = listOf())
+    val alarmData by viewModel.alarmUiDataList.collectAsStateWithLifecycle(initialValue = listOf())
     val alarmScreenData by viewModel.alarmScreenData.collectAsStateWithLifecycle(AlarmScreenData.initialState)
 
     Scaffold(
@@ -84,7 +84,7 @@ fun AlarmScreenContent(
                     alarmScheduleDays = currentAlarmData.alarmScheduledDays,
                     alarmScheduleType = currentAlarmData.alarmScheduleType,
                     vibrateStatus = currentAlarmData.isAlarmVibrate,
-                    alarmExpanded = currentAlarmData.isAlarmExpanded,
+                    alarmExpanded = alarmScreenData.expandedAlarmIndex == index,
                     onAddLabelClicked = {
                         viewModel.onAddLabelClicked(index)
                     },

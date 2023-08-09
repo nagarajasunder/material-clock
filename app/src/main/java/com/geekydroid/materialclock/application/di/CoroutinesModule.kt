@@ -10,27 +10,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
 import javax.inject.Singleton
-//
-//@Module
-//@InstallIn(SingletonComponent::class)
-//object CoroutinesModule {
-//
-//    @Provides
-//    @Singleton
-//    @ApplicationScope
-//    fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
-//
-//    @Provides
-//    @Singleton
-//    @IoDispatcher
-//    fun providesExternalDispatcher(): CoroutineDispatcher = Dispatchers.IO
-//
-//}
-//
-//@Retention(AnnotationRetention.RUNTIME)
-//@Qualifier
-//annotation class ApplicationScope {}
-//
-//@Retention(AnnotationRetention.RUNTIME)
-//@Qualifier
-//annotation class IoDispatcher {}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object CoroutinesModule {
+
+    @Provides
+    @Singleton
+    @ApplicationScope
+    fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
+
+    @Provides
+    @Singleton
+    @IoDispatcher
+    fun providesExternalDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+}
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+annotation class ApplicationScope {}
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+annotation class IoDispatcher {}
