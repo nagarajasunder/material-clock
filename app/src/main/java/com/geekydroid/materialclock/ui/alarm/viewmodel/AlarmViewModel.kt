@@ -225,7 +225,6 @@ class AlarmViewModel @Inject constructor(
     }
 
     override fun onDatePickerConfirmed(time: Long) {
-        //Todo("Close the Time picker and update the alarm time in millis")
         viewModelScope.launch {
             val selectedAlarm = alarmUiDataList.value[selectedAlarmIndex]
             updateAlarmsList(

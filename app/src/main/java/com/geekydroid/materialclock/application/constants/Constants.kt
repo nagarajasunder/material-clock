@@ -17,4 +17,5 @@ object Constants {
     const val SATURDAY = "Sat"
     const val EVERYDAY = "Everyday"
 
+    const val NO_OF_DAYS_IN_A_WEEK = 7
 }
