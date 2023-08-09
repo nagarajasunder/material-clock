@@ -3,7 +3,7 @@ androidxCore = "1.9.0"
 composeVersion = "1.4.3"
 lifecycleVersion = "2.6.1"
 coroutinesVersion = "1.6.4"
-roomVersion = "2.5.1"
+roomVersion = "2.5.2"
 hilt = "2.47"
 androidxHiltNavigationCompose = "1.0.0"
 accompanistVersion = "0.28.0"
@@ -46,7 +46,9 @@ androidx-lifecycle-viewmodel-savedState = { group = "androidx.lifecycle", name =
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesVersion" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
-androix-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomVersion" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
+androidx-room-test = { group = "androidx.room", name = "room-testing", version.ref = "roomVersion" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
@@ -54,7 +56,7 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 material-three = { group = "androidx.compose.material3", name = "material3", version.ref = "materialThreeVersion" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity"}
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "dataStorePrefsVer"}

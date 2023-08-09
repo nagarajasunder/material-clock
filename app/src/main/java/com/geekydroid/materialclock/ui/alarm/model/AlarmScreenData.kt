@@ -6,14 +6,15 @@ package com.geekydroid.materialclock.ui.alarm.model
  */
 
 data class AlarmScreenData(
+    val expandedAlarmIndex: Int = -1,
     val showAddLabelDialog: Boolean,
     val labelValue: String,
     val showSelectTimeDialog: Boolean,
-    val showTimeInput:Boolean,
-    val alarmTimeInMillis:Long,
-    val showDatePicker:Boolean,
-    val datePickerTitle:String,
-    val showDateRangePicker:Boolean
+    val showTimeInput: Boolean,
+    val alarmTimeInMillis: Long,
+    val showDatePicker: Boolean,
+    val datePickerTitle: String,
+    val showDateRangePicker: Boolean
 ) {
 
     companion object {
