@@ -10,7 +10,7 @@ import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
 data class AlarmMaster(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("alarm_id")
-    val alarmId: Int = 0,
+    val alarmId: Long = 0L,
     @ColumnInfo("alarm_status")
     val alarmStatus: AlarmStatus,
     @ColumnInfo("alarm_label")

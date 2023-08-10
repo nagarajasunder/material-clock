@@ -32,7 +32,7 @@ class AlarmRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteAlarmById(alarmId: Int) {
+    suspend fun deleteAlarmById(alarmId: Long) {
         externalScope.launch(externalDispatcher) {
             alarmDao.deleteAlarmById(alarmId)
         }

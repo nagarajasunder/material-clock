@@ -20,5 +20,5 @@ interface AlarmDao {
     fun getAllAlarms(): Flow<List<AlarmMaster>>
 
     @Query("DELETE FROM MC_ALARM_MASTER WHERE alarm_id = :alarmId")
-    suspend fun deleteAlarmById(alarmId: Int)
+    suspend fun deleteAlarmById(alarmId: Long)
 }

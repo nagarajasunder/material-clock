@@ -7,6 +7,7 @@ import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.datastore.DatastoreKeyManager
 import com.geekydroid.materialclock.application.datastore.DatastoreManager
 import com.geekydroid.materialclock.application.di.IoDispatcher
+import com.geekydroid.materialclock.application.utils.AlarmUtils
 import com.geekydroid.materialclock.application.utils.ResourceProvider
 import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
@@ -404,7 +405,14 @@ class AlarmViewModel @Inject constructor(
     private fun updateAlarmsList(selectedAlarm: AlarmUiData, updateDb: Boolean = true) {
         if (updateDb) {
             viewModelScope.launch {
-                val alarmMaster: AlarmMaster = transformAlarmUiDataToAlarmMaster(selectedAlarm)
+                val alarmScheduleMillis = AlarmUtils.getAlarmTimeBasedOnConstraints(
+                    alarmScheduleType = selectedAlarm.alarmScheduleType,
+                    alarmScheduleDays = selectedAlarm.alarmScheduledDays,
+                    alarmTimeMillis = selectedAlarm.alarmTimeInMills,
+                    alarmDateMillis = selectedAlarm.alarmDateInMillis
+                )
+                val alarmMaster: AlarmMaster =
+                    transformAlarmUiDataToAlarmMaster(selectedAlarm).copy(alarmTimeInMillis = alarmScheduleMillis)
                 alarmRepository.updateExistingAlarm(alarmMaster)
             }
         }
@@ -477,7 +485,7 @@ class AlarmViewModel @Inject constructor(
         deleteAlarm(selectedAlarm.alarmId)
     }
 
-    private fun deleteAlarm(alarmId: Int) {
+    private fun deleteAlarm(alarmId: Long) {
         viewModelScope.launch {
             alarmRepository.deleteAlarmById(alarmId)
         }
