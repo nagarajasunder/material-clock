@@ -10,7 +10,7 @@ import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
 data class AlarmMaster(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("alarm_id")
-    val alarmId: Long = 0L,
+    val alarmId: Int = 0,
     @ColumnInfo("alarm_status")
     val alarmStatus: AlarmStatus,
     @ColumnInfo("alarm_label")
@@ -19,12 +19,18 @@ data class AlarmMaster(
     val alarmTimeInMillis: Long,
     @ColumnInfo("alarm_date_in_millis")
     val alarmDateInMillis: Long,
+    @ColumnInfo("alarm_trigger_millis")
+    val alarmTriggerMillis:Long = 0L,
     @ColumnInfo("alarm_scheduled_days")
     val alarmScheduledDays: String,
     @ColumnInfo("alarm_schedule_type")
     val alarmType: AlarmScheduleType,
     @ColumnInfo("is_alarm_vibrate")
     val isAlarmVibrate: Boolean,
+    @ColumnInfo("is_snoozed")
+    val isSnoozed: Boolean = false,
+    @ColumnInfo("snooze_millis")
+    val snoozeMillis:Long = 0L,
     @ColumnInfo("created_on")
     val createdOn: Long,
     @ColumnInfo("updated_on")

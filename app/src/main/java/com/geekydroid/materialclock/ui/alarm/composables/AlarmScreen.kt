@@ -1,5 +1,6 @@
 package com.geekydroid.materialclock.ui.alarm.composables
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,13 +13,19 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.geekydroid.materialclock.application.utils.AlarmScheduler
 import com.geekydroid.materialclock.ui.alarm.model.AlarmScreenData
+import com.geekydroid.materialclock.ui.alarm.screenevents.AlarmScreenEvents
 import com.geekydroid.materialclock.ui.alarm.viewmodel.AlarmViewModel
+
+private const val TAG = "AlarmScreen"
 
 @Composable
 fun AlarmScreenContent(
@@ -26,8 +33,38 @@ fun AlarmScreenContent(
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
 
+    val context: Context = LocalContext.current
     val alarmData by viewModel.alarmUiDataList.collectAsStateWithLifecycle(initialValue = listOf())
     val alarmScreenData by viewModel.alarmScreenData.collectAsStateWithLifecycle(AlarmScreenData.initialState)
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.screenEvents.collect { event ->
+            when (event) {
+                is AlarmScreenEvents.ScheduleAlarm -> {
+                    val alarmMaster = event.alarmMaster
+                    AlarmScheduler.scheduleAlarmWithReminder(
+                        context = context,
+                        alarmId = alarmMaster.alarmId,
+                        alarmDateMillis = alarmMaster.alarmDateInMillis,
+                        alarmTimeMillis = alarmMaster.alarmTimeInMillis,
+                        alarmTriggerMillis = alarmMaster.alarmTriggerMillis,
+                        alarmLabel = alarmMaster.alarmLabel,
+                        alarmScheduleType = alarmMaster.alarmType,
+                        alarmScheduleDays = alarmMaster.alarmScheduledDays,
+                        isAlarmVibrate = alarmMaster.isAlarmVibrate,
+                    )
+                }
+
+                is AlarmScreenEvents.CancelAlarm -> {
+                    AlarmScheduler.cancelAlarm(context,event.alarmId)
+                }
+
+                is AlarmScreenEvents.CancelSnoozedAlarm -> {
+                    AlarmScheduler.cancelSnoozedAlarm(context,event.alarmId)
+                }
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -63,8 +100,7 @@ fun AlarmScreenContent(
                         onConfirm = viewModel::onAlarmTimeChanged,
                         onCancel = viewModel::onTimePickerDialogClosed
                     )
-                }
-                else if (alarmScreenData.showDatePicker) {
+                } else if (alarmScreenData.showDatePicker) {
                     DatePickerDialogWrapper(
                         titleText = alarmScreenData.datePickerTitle,
                         onDismissed = viewModel::onDatePickerDialogDismissed,
@@ -85,6 +121,8 @@ fun AlarmScreenContent(
                     alarmScheduleType = currentAlarmData.alarmScheduleType,
                     vibrateStatus = currentAlarmData.isAlarmVibrate,
                     alarmExpanded = alarmScreenData.expandedAlarmIndex == index,
+                    isSnoozed = currentAlarmData.isAlarmSnooze,
+                    alarmSnoozeMillis = currentAlarmData.alarmSnoozeMillis,
                     onAddLabelClicked = {
                         viewModel.onAddLabelClicked(index)
                     },
@@ -105,6 +143,9 @@ fun AlarmScreenContent(
                     },
                     onVibrateStatusChange = { newStatus ->
                         viewModel.onVibrationStatusChange(index, newStatus)
+                    },
+                    onSnoozeCancelled = {
+                        viewModel.onSnoozeCancelled(index)
                     },
                     onDeleteClick = {
                         viewModel.onDeleteClicked(index)

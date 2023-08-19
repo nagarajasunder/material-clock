@@ -4,6 +4,7 @@ enum class AlarmType {
 
     REMINDER,
     ACTUAL,
-    SNOOZE
+    SNOOZE,
+    NA
 
 }

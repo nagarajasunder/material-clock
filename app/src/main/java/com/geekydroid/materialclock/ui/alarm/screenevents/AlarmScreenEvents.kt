@@ -1,8 +1,12 @@
 package com.geekydroid.materialclock.ui.alarm.screenevents
 
-sealed interface AlarmScreenEvents {
+import com.geekydroid.materialclock.ui.alarm.model.AlarmMaster
 
-    object OpenDateRangePicker : AlarmScreenEvents
-    object OpenDatePicker : AlarmScreenEvents
+sealed interface AlarmScreenEvents {
+    data class ScheduleAlarm(val alarmMaster: AlarmMaster) : AlarmScreenEvents
+
+    data class CancelAlarm(val alarmId:Int) : AlarmScreenEvents
+
+    data class CancelSnoozedAlarm(val alarmId:Int) : AlarmScreenEvents
 
 }

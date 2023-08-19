@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#0062FF"
+    android:padding="16dp">
+
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/TextAppearance.Compat.Notification.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/white"
+        tools:text="Notification Title" />
+
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Notification Title"
+        android:textColor="@color/white"
+        android:layout_below="@+id/tv_title"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/tv_description"
+        android:layout_marginTop="8dp"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/tv_snooze"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/snooze"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:clickable="true"
+            android:background="@drawable/box_background"
+            android:focusable="true"
+            android:textColor="@color/white"
+            android:padding="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            style="@style/TextAppearance.MaterialComponents.Button"/>
+
+        <TextView
+            android:id="@+id/tv_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/stop"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/box_background"
+            android:textColor="@color/white"
+            style="@style/TextAppearance.MaterialComponents.Button"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -34,6 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
+import com.geekydroid.materialclock.application.utils.TIME_FORMATS
+import com.geekydroid.materialclock.application.utils.TimeUtils
 import com.geekydroid.materialclock.ui.theme.alarmCardContainerColor
 import com.geekydroid.materialclock.ui.theme.weekDaySelectedColor
 
@@ -79,6 +81,8 @@ fun AlarmCard(
     alarmScheduleType: AlarmScheduleType,
     vibrateStatus: Boolean,
     alarmExpanded: Boolean,
+    isSnoozed : Boolean,
+    alarmSnoozeMillis : Long,
     onAddLabelClicked: () -> Unit,
     onCollapseClicked: () -> Unit,
     onAlarmTimeClick: () -> Unit,
@@ -86,6 +90,7 @@ fun AlarmCard(
     onDaysSelected: (WeekDay) -> Unit,
     onScheduleAlarmClicked: () -> Unit,
     onVibrateStatusChange: (Boolean) -> Unit,
+    onSnoozeCancelled: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
 
@@ -242,6 +247,16 @@ fun AlarmCard(
                             tint = if (vibrateStatus) weekDaySelectedColor else Color.Unspecified
                         )
                     }
+                    if (isSnoozed) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.snoozed_until,
+                                TimeUtils.getFormattedTime(TIME_FORMATS.HH_MM, alarmSnoozeMillis)
+                            ),
+                            modifier = Modifier.clickable { onSnoozeCancelled() },
+                            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Blue)
+                        )
+                    }
                     Row(
                         modifier = Modifier
                             .padding(vertical = 6.dp)
@@ -297,6 +312,8 @@ fun AlarmCardPreview() {
         alarmScheduleType = AlarmScheduleType.SCHEDULE_ONCE,
         vibrateStatus = false,
         alarmExpanded = expanded,
+        isSnoozed = true,
+        alarmSnoozeMillis = System.currentTimeMillis(),
         onAddLabelClicked = { },
         onCollapseClicked = {
             expanded != expanded
@@ -307,6 +324,7 @@ fun AlarmCardPreview() {
         },
         onScheduleAlarmClicked = { },
         onVibrateStatusChange = {},
+        onSnoozeCancelled = {},
         onDeleteClick = {}
     )
 }

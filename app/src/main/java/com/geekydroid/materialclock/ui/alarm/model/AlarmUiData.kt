@@ -9,7 +9,7 @@ import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
  */
 
 data class AlarmUiData(
-  val alarmId: Long = 0L,
+  val alarmId: Int = 0,
   val alarmLabel: String = "",
   val alarmTimeText: String = "",
   val alarmTimeInMills: Long = 0L,
@@ -20,5 +20,7 @@ data class AlarmUiData(
   val alarmScheduleText: String = "",
   val alarmSnoozeText: String = "",
   val showAlarmDismissCta: Boolean = false,
-  val isAlarmVibrate: Boolean = false
+  val isAlarmVibrate: Boolean = false,
+  val isAlarmSnooze:Boolean = false,
+  val alarmSnoozeMillis:Long = 0L
 )

@@ -17,24 +17,32 @@ object AlarmUtils {
         alarmDateMillis:Long
     ) : Long {
 
-        AlarmManager.INTERVAL_DAY
+        /**
+         * The logic behind this, Let's say an alarm has rang yesterday at 07:00 and it is off now
+         * and Today at 08:00 the user again turns On the alarm so the time for today is already past so we are
+         * scheduling the alarm for next day
+         */
+        val finalAlarmTimeMillis = if (alarmTimeMillis < System.currentTimeMillis())
+            alarmTimeMillis + AlarmManager.INTERVAL_DAY
+        else
+            alarmTimeMillis
 
         val result =  when(alarmScheduleType) {
             AlarmScheduleType.ONCE -> {
-                alarmTimeMillis
+                finalAlarmTimeMillis
             }
             AlarmScheduleType.SCHEDULE_ONCE -> {
-                getDateTimeFromDateAndTime(alarmDateMillis, alarmTimeMillis)
+                getDateTimeFromDateAndTime(alarmDateMillis, finalAlarmTimeMillis)
             }
             AlarmScheduleType.REPEATED -> {
-                getAlarmTimeForRepeatedAlarm(alarmScheduleDays,alarmTimeMillis)
+                getAlarmTimeForRepeatedAlarm(alarmScheduleDays,finalAlarmTimeMillis)
             }
         }
 
         return result
     }
 
-    private fun getDateTimeFromDateAndTime(dateMillis: Long, timeMillis: Long): Long {
+    fun getDateTimeFromDateAndTime(dateMillis: Long, timeMillis: Long): Long {
         val dateCalendar = Calendar.getInstance()
         dateCalendar.timeInMillis = dateMillis
         val timeCalendar = Calendar.getInstance()
@@ -60,6 +68,9 @@ object AlarmUtils {
         val calendar = Calendar.getInstance()
         var currentDayIndex = calendar[Calendar.DAY_OF_WEEK]
         var scheduleTime = System.currentTimeMillis()
+        if (alarmScheduleDays[currentDayIndex].isUpperCase()) {
+            return alarmTimeMillis
+        }
         val intervalDay = AlarmManager.INTERVAL_DAY
         var alarmDateMillis = 0L
         for (i in (0 until Constants.NO_OF_DAYS_IN_A_WEEK)) {
@@ -76,5 +87,18 @@ object AlarmUtils {
         }
         return getDateTimeFromDateAndTime(alarmDateMillis,alarmTimeMillis)
     }
+
+    fun isEligibleForReminderAlarm(alarmTriggerMillis:Long) : Boolean {
+        return alarmTriggerMillis > (System.currentTimeMillis() + (Constants.ALARM_REMINDER_HOUR*60_000))
+    }
+
+    fun getAlarmSnoozeTime(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.SECOND,0)
+        calendar.set(Calendar.MILLISECOND,0)
+        return calendar.timeInMillis + Constants.ALARM_SNOOZE_INTERVAL_MILLIS
+    }
+
+
 
 }

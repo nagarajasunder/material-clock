@@ -8,8 +8,6 @@ interface AlarmScreenActions {
 
     fun onAlarmTimeChanged(calendar: Calendar,showTimeInput:Boolean)
 
-    fun onAlarmScheduledDatesChanged()
-
     fun onLabelValueChange(newValue:String)
 
     fun onAlarmLabelDialogDismissed()
@@ -22,5 +20,4 @@ interface AlarmScreenActions {
 
     fun onDatePickerConfirmed(time:Long)
 
-    fun onDateRangePickerConfirmed(timePair:Pair<Long,Long>)
 }

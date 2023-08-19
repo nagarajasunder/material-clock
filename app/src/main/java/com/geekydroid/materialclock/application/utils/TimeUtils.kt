@@ -1,9 +1,10 @@
 package com.geekydroid.materialclock.application.utils
 
-import android.app.AlarmManager
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
+private const val TAG = "TimeUtils"
 
 object TimeUtils {
 
@@ -15,12 +16,7 @@ object TimeUtils {
     }
 
     fun isTomorrow(timeInMills:Long): Boolean {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY,0)
-        calendar.set(Calendar.MINUTE,0)
-        calendar.set(Calendar.SECOND,0)
-        calendar.set(Calendar.MILLISECOND,0)
-        return (calendar.timeInMillis + AlarmManager.INTERVAL_DAY) < timeInMills
+        return getFormattedTime(TIME_FORMATS.DD_MM_YYYY,timeInMills) != getFormattedTime(TIME_FORMATS.DD_MM_YYYY,System.currentTimeMillis())
     }
 
     fun isPastTime(timeInMills: Long) : Boolean = System.currentTimeMillis() > timeInMills
@@ -29,6 +25,8 @@ object TimeUtils {
         val timeFormatStr = when(timeFormat) {
             TIME_FORMATS.HH_MM -> "HH:mm"
             TIME_FORMATS.MMM_DD -> "MMM dd"
+            TIME_FORMATS.EEE_HH_MM -> "EEE, HH:mm a"
+            TIME_FORMATS.DD_MM_YYYY -> "dd/MM/yyyy"
         }
         return SimpleDateFormat(timeFormatStr, Locale.ENGLISH).format(timeInMillis)
     }
@@ -42,5 +40,7 @@ object TimeUtils {
 
 enum class TIME_FORMATS {
     HH_MM,
-    MMM_DD
+    MMM_DD,
+    EEE_HH_MM,
+    DD_MM_YYYY
 }
