@@ -38,6 +38,7 @@ import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
 import com.geekydroid.materialclock.ui.theme.alarmCardContainerColor
 import com.geekydroid.materialclock.ui.theme.weekDaySelectedColor
+import com.geekydroid.materialclock.ui.theme.week_day_highlight_color
 
 enum class AlarmStatus {
     ON,
@@ -254,7 +255,7 @@ fun AlarmCard(
                                 TimeUtils.getFormattedTime(TIME_FORMATS.HH_MM, alarmSnoozeMillis)
                             ),
                             modifier = Modifier.clickable { onSnoozeCancelled() },
-                            style = MaterialTheme.typography.bodyMedium.copy(color = Color.Blue)
+                            style = MaterialTheme.typography.bodyMedium.copy(color = week_day_highlight_color)
                         )
                     }
                     Row(

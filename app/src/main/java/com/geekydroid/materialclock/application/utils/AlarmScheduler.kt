@@ -156,8 +156,18 @@ object AlarmScheduler {
         isAlarmVibrate:Boolean,
         alarmType:AlarmType,
     ) {
+        /**
+         * This finalAlarmId is to modify the alarm id which scheduling the alarm based on it's type
+         */
+        val finalAlarmId = when(alarmType) {
+            AlarmType.SNOOZE -> alarmId*Constants.SNOOZE_ALARM_ID
+            else -> alarmId
+        }
+        val snoozedAlarmId = if (alarmType == AlarmType.SNOOZE) alarmId*Constants.SNOOZE_ALARM_ID else 0
+
         val alarmIntent = Intent(context, AlarmReceiver::class.java)
         alarmIntent.putExtra(Constants.KEY_ALARM_ID, alarmId)
+        alarmIntent.putExtra(Constants.KEY_SNOOZED_ALARM_ID,snoozedAlarmId)
         alarmIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_DATE_MILLIS, alarmDateMillis)
         alarmIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_TIME_MILLIS, alarmTimeMillis)
         alarmIntent.putExtra(Constants.KEY_ALARM_TRIGGER_MILLIS, alarmTriggerMillis)
@@ -170,7 +180,7 @@ object AlarmScheduler {
 
         val alarmPendingIntent = PendingIntent.getBroadcast(
             context,
-            alarmId,
+            finalAlarmId,
             alarmIntent,
             PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

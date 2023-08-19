@@ -181,7 +181,7 @@ object AlarmNotificationHelper {
 
         val dismissActionIntent = Intent(context, AlarmReceiver::class.java)
         dismissActionIntent.putExtra(Constants.KEY_ALARM_ID, alarmId)
-        dismissActionIntent.putExtra(Constants.KEY_ALARM_ID, alarmId)
+        dismissActionIntent.putExtra(Constants.KEY_SNOOZED_ALARM_ID, (alarmId*Constants.SNOOZE_ALARM_ID))
         dismissActionIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_DATE_MILLIS, alarmDateMillis)
         dismissActionIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_TIME_MILLIS, alarmTimeMillis)
         dismissActionIntent.putExtra(Constants.KEY_ALARM_TRIGGER_MILLIS, alarmTriggerMillis)

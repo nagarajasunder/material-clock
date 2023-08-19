@@ -7,6 +7,8 @@ import android.os.Build
 import com.geekydroid.materialclock.application.constants.Constants
 import dagger.hilt.android.HiltAndroidApp
 
+//Todo("Issue: When we snooze the alarm the actual alarm millis which the user scheduled is changed to the snooze time")
+
 @HiltAndroidApp
 class MaterialClockApp : Application() {
     override fun onCreate() {

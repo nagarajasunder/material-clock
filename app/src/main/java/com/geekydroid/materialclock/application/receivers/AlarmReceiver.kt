@@ -43,6 +43,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarmActionTypeStr = intent.getStringExtra(Constants.KEY_ALARM_ACTION_TYPE)?:""
             val alarmActionType = getAlarmActionType(alarmActionTypeStr)
             val alarmId = intent.getIntExtra(Constants.KEY_ALARM_ID, -1)
+            val snoozedAlarmId = intent.getIntExtra(Constants.KEY_SNOOZED_ALARM_ID,-1)
             val alarmLabel = intent.getStringExtra(Constants.KEY_ALARM_LABEL) ?: ""
             val isAlarmVibrate = intent.getBooleanExtra(Constants.KEY_IS_ALARM_VIBRATE, false)
             val alarmScheduleDays = intent.getStringExtra(Constants.KEY_ALARM_SCHEDULE_DAYS) ?: ""
@@ -155,7 +156,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     val snoozeTriggerMillis =  AlarmUtils.getAlarmSnoozeTime()
                     AlarmScheduler.scheduleAlarm(
                         context = context,
-                        alarmId = alarmId*Constants.SNOOZE_ALARM_ID,
+                        alarmId = alarmId,
                         alarmLabel = alarmLabel,
                         isAlarmVibrate = isAlarmVibrate,
                         alarmScheduleType = alarmScheduleType,
@@ -167,7 +168,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     )
                     AlarmNotificationHelper.postAlarmSnoozeReminderNotification(
                         context = context,
-                        alarmId = (alarmId*Constants.SNOOZE_ALARM_ID),
+                        alarmId = alarmId,
                         alarmTriggerMillis = snoozeTriggerMillis,
                         alarmLabel = alarmLabel,
                         alarmDateMillis = alarmDateMillis,
@@ -191,8 +192,9 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
 
                 AlarmActionType.SNOOZE_DISMISS -> {
-                    AlarmScheduler.cancelAlarm(context!!,(alarmId*Constants.SNOOZE_ALARM_ID))
+                    AlarmScheduler.cancelAlarm(context!!,snoozedAlarmId)
                     AlarmNotificationHelper.cancelNotification(context,alarmId)
+                    updateSnoozeDetails(alarmId,alarmScheduleType,false,0L)
                 }
                 AlarmActionType.NA -> {}
             }
@@ -292,9 +294,14 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun updateSnoozeDetails(alarmId: Int, alarmScheduleType: AlarmScheduleType,isSnoozed: Boolean, snoozeTriggerMillis: Long) {
         externalScope.launch(externalDispatcher) {
-            val alarmStatus = when(alarmScheduleType) {
-                AlarmScheduleType.ONCE,AlarmScheduleType.SCHEDULE_ONCE -> AlarmStatus.OFF
-                AlarmScheduleType.REPEATED -> AlarmStatus.ON
+            val alarmStatus = if (isSnoozed) {
+                AlarmStatus.ON
+            }
+            else {
+                when(alarmScheduleType) {
+                    AlarmScheduleType.ONCE,AlarmScheduleType.SCHEDULE_ONCE -> AlarmStatus.OFF
+                    AlarmScheduleType.REPEATED -> AlarmStatus.ON
+                }
             }
             alarmRepository.updateSnoozeDetails(alarmId,alarmStatus,isSnoozed,snoozeTriggerMillis)
         }
