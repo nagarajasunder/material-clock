@@ -7,6 +7,7 @@ import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.datastore.DatastoreKeyManager
 import com.geekydroid.materialclock.application.datastore.DatastoreManager
 import com.geekydroid.materialclock.application.di.IoDispatcher
+import com.geekydroid.materialclock.application.utils.AlarmUtils
 import com.geekydroid.materialclock.application.utils.ResourceProvider
 import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
@@ -19,15 +20,19 @@ import com.geekydroid.materialclock.ui.alarm.model.AlarmUiData
 import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepository
 import com.geekydroid.materialclock.ui.alarm.screenactions.AlarmCardActions
 import com.geekydroid.materialclock.ui.alarm.screenactions.AlarmScreenActions
+import com.geekydroid.materialclock.ui.alarm.screenevents.AlarmScreenEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -69,6 +74,9 @@ class AlarmViewModel @Inject constructor(
     private var alarmTimeIndex = -1
     private var showTimeInput = false
 
+    private val eventsChannel = Channel<AlarmScreenEvents>()
+    val screenEvents : Flow<AlarmScreenEvents> = eventsChannel.receiveAsFlow()
+
     init {
         collectTimeInputUpdates()
     }
@@ -92,6 +100,8 @@ class AlarmViewModel @Inject constructor(
                     alarmDateMillis = alarmMaster.alarmDateInMillis
                 ),
                 isAlarmVibrate = alarmMaster.isAlarmVibrate,
+                isAlarmSnooze = alarmMaster.isSnoozed,
+                alarmSnoozeMillis = alarmMaster.snoozeMillis
             )
             alarmUiDataList.add(alarmUiData)
 
@@ -119,6 +129,8 @@ class AlarmViewModel @Inject constructor(
     }
 
     private fun addNewAlarm(calendar: Calendar) {
+        calendar.set(Calendar.SECOND,0)
+        calendar.set(Calendar.MILLISECOND,0)
         viewModelScope.launch {
             val newAlarm =
                 AlarmUiData(
@@ -140,7 +152,8 @@ class AlarmViewModel @Inject constructor(
 
     private suspend fun insertNewAlarm(newAlarm: AlarmUiData) {
         val alarmMaster: AlarmMaster = transformAlarmUiDataToAlarmMaster(newAlarm)
-        alarmRepository.insertNewAlarm(alarmMaster)
+        val alarmId = alarmRepository.insertNewAlarm(alarmMaster)
+        eventsChannel.send(AlarmScreenEvents.ScheduleAlarm(alarmMaster.copy(alarmId = alarmId.toInt())))
     }
 
     override fun onAlarmTimeTextClicked(index: Int) {
@@ -166,6 +179,8 @@ class AlarmViewModel @Inject constructor(
             _alarmScreenData.update {
                 it.copy(showSelectTimeDialog = false, alarmTimeInMillis = 0L)
             }
+            calendar.set(Calendar.SECOND,0)
+            calendar.set(Calendar.MILLISECOND,0)
             if (TimeUtils.isPastTime(calendar.timeInMillis)) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
             }
@@ -182,7 +197,7 @@ class AlarmViewModel @Inject constructor(
                     alarmTimeInMills = calendar.timeInMillis,
                     alarmDateInMillis = calendar.timeInMillis
                 )
-                updateAlarmsList(selectedAlarm)
+                updateAlarmsList(selectedAlarm, rescheduleAlarm = true)
             }
             toggleAlarmTimeIndex(-1)
         }
@@ -225,7 +240,6 @@ class AlarmViewModel @Inject constructor(
     }
 
     override fun onDatePickerConfirmed(time: Long) {
-        //Todo("Close the Time picker and update the alarm time in millis")
         viewModelScope.launch {
             val selectedAlarm = alarmUiDataList.value[selectedAlarmIndex]
             updateAlarmsList(
@@ -233,21 +247,14 @@ class AlarmViewModel @Inject constructor(
                     alarmScheduleType = AlarmScheduleType.SCHEDULE_ONCE,
                     alarmDateInMillis = time,
                     alarmScheduledDays = Constants.WEEK_DAYS_UNSELECTED_DEFAULT_STR
-                )
+                ),
+                rescheduleAlarm = true
             )
             toggleSelectedAlarmIndex(-1)
             _alarmScreenData.update {
                 it.copy(showDatePicker = false)
             }
         }
-    }
-
-    override fun onDateRangePickerConfirmed(timePair: Pair<Long, Long>) {
-
-    }
-
-    override fun onAlarmScheduledDatesChanged() {
-
     }
 
     override fun onAlarmCollapsedChanged(index: Int) {
@@ -296,7 +303,7 @@ class AlarmViewModel @Inject constructor(
         viewModelScope.launch {
             val selectedAlarm =
                 alarmUiDataList.value[selectedAlarmIndex].copy(alarmLabel = _alarmScreenData.value.labelValue)
-            updateAlarmsList(selectedAlarm)
+            updateAlarmsList(selectedAlarm, rescheduleAlarm = true)
         }
         viewModelScope.launch {
             _alarmScreenData.update {
@@ -309,9 +316,25 @@ class AlarmViewModel @Inject constructor(
     override fun onAlarmStatusChange(index: Int, newStatus: AlarmStatus) {
         viewModelScope.launch {
             var selectedAlarm = alarmUiDataList.value[index]
-            selectedAlarm =
-                selectedAlarm.copy(alarmStatus = newStatus)
-            updateAlarmsList(selectedAlarm)
+            selectedAlarm = selectedAlarm.copy(
+                    alarmStatus = newStatus,
+                    alarmScheduleText = getAlarmScheduleText(
+                        alarmScheduleType = selectedAlarm.alarmScheduleType,
+                        timeInMillis = selectedAlarm.alarmTimeInMills,
+                        alarmScheduleDays = selectedAlarm.alarmScheduledDays,
+                        alarmDateMillis = selectedAlarm.alarmDateInMillis
+                    )
+                )
+            when(newStatus) {
+                AlarmStatus.ON -> {
+                    updateAlarmsList(selectedAlarm, rescheduleAlarm = true)
+                }
+                AlarmStatus.OFF -> {
+                    updateAlarmsList(selectedAlarm, rescheduleAlarm = false)
+                    eventsChannel.send(AlarmScreenEvents.CancelAlarm(alarmId = selectedAlarm.alarmId))
+                }
+            }
+
         }
     }
 
@@ -340,7 +363,8 @@ class AlarmViewModel @Inject constructor(
                 alarmScheduledDays = currentScheduleDays,
                 alarmScheduleType = alarmScheduleType
             )
-            updateAlarmsList(selectedAlarm)
+            eventsChannel.send(AlarmScreenEvents.CancelAlarm(selectedAlarm.alarmId))
+            updateAlarmsList(selectedAlarm, rescheduleAlarm = true)
         }
     }
 
@@ -383,7 +407,11 @@ class AlarmViewModel @Inject constructor(
     ): String {
         return when (alarmScheduleType) {
             AlarmScheduleType.ONCE -> {
-                if (TimeUtils.isTomorrow(timeInMillis)) resourceProvider.getString(R.string.tomorrow) else resourceProvider.getString(
+                val alarmTriggerMillis = AlarmUtils.getDateTimeFromDateAndTime(
+                    dateMillis = alarmDateMillis,
+                    timeMillis = timeInMillis
+                )
+                if (TimeUtils.isTomorrow(alarmTriggerMillis)) resourceProvider.getString(R.string.tomorrow) else resourceProvider.getString(
                     R.string.today
                 )
             }
@@ -402,11 +430,21 @@ class AlarmViewModel @Inject constructor(
     }
 
 
-    private fun updateAlarmsList(selectedAlarm: AlarmUiData, updateDb: Boolean = true) {
+    private fun updateAlarmsList(selectedAlarm: AlarmUiData, updateDb: Boolean = true,rescheduleAlarm:Boolean) {
         if (updateDb) {
             viewModelScope.launch {
-                val alarmMaster: AlarmMaster = transformAlarmUiDataToAlarmMaster(selectedAlarm)
+                val alarmScheduleMillis = AlarmUtils.getAlarmTimeBasedOnConstraints(
+                    alarmScheduleType = selectedAlarm.alarmScheduleType,
+                    alarmScheduleDays = selectedAlarm.alarmScheduledDays,
+                    alarmTimeMillis = selectedAlarm.alarmTimeInMills,
+                    alarmDateMillis = selectedAlarm.alarmDateInMillis
+                )
+                val alarmMaster: AlarmMaster =
+                    transformAlarmUiDataToAlarmMaster(selectedAlarm).copy(alarmTriggerMillis = alarmScheduleMillis)
                 alarmRepository.updateExistingAlarm(alarmMaster)
+                if (rescheduleAlarm) {
+                    eventsChannel.send(AlarmScreenEvents.ScheduleAlarm(alarmMaster))
+                }
             }
         }
     }
@@ -418,6 +456,7 @@ class AlarmViewModel @Inject constructor(
             alarmLabel = alarmUiData.alarmLabel,
             alarmTimeInMillis = alarmUiData.alarmTimeInMills,
             alarmDateInMillis = alarmUiData.alarmDateInMillis,
+            alarmTriggerMillis = alarmUiData.alarmTimeInMills,
             alarmScheduledDays = alarmUiData.alarmScheduledDays,
             alarmType = alarmUiData.alarmScheduleType,
             isAlarmVibrate = alarmUiData.isAlarmVibrate,
@@ -442,7 +481,8 @@ class AlarmViewModel @Inject constructor(
                         selectedAlarm = selectedAlarm.copy(
                             alarmScheduleType = AlarmScheduleType.ONCE,
                             alarmDateInMillis = selectedAlarm.alarmTimeInMills
-                        )
+                        ),
+                        rescheduleAlarm = true
                     )
                 }
 
@@ -464,12 +504,14 @@ class AlarmViewModel @Inject constructor(
         viewModelScope.launch {
             var selectedAlarm = alarmUiDataList.value[index]
             selectedAlarm = selectedAlarm.copy(isAlarmVibrate = newStatus)
-            updateAlarmsList(selectedAlarm)
+            updateAlarmsList(selectedAlarm, rescheduleAlarm = true)
         }
     }
 
-    override fun onDismissClicked(index: Int) {
-
+    override fun onSnoozeCancelled(index: Int) {
+        toggleSelectedAlarmIndex(-1)
+        val selectedAlarm = alarmUiDataList.value[index]
+        deleteSnoozedAlarm(selectedAlarm.alarmId,selectedAlarm.alarmScheduleType)
     }
 
     override fun onDeleteClicked(index: Int) {
@@ -481,6 +523,23 @@ class AlarmViewModel @Inject constructor(
     private fun deleteAlarm(alarmId: Int) {
         viewModelScope.launch {
             alarmRepository.deleteAlarmById(alarmId)
+            eventsChannel.send(AlarmScreenEvents.CancelAlarm(alarmId))
+        }
+    }
+
+    private fun deleteSnoozedAlarm(alarmId: Int,alarmScheduleType: AlarmScheduleType) {
+        viewModelScope.launch {
+            val alarmStatus = when(alarmScheduleType) {
+                AlarmScheduleType.ONCE,AlarmScheduleType.SCHEDULE_ONCE -> AlarmStatus.OFF
+                AlarmScheduleType.REPEATED -> AlarmStatus.ON
+            }
+            alarmRepository.updateSnoozeDetails(
+                alarmId = alarmId,
+                alarmStatus = alarmStatus,
+                isSnoozed = false,
+                snoozeMillis = 0L
+            )
+            eventsChannel.send(AlarmScreenEvents.CancelSnoozedAlarm(alarmId))
         }
     }
 

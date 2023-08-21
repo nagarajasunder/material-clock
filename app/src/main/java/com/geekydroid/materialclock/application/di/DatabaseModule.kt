@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.geekydroid.materialclock.application.db.AppDatabase
 import com.geekydroid.materialclock.application.db.dao.AlarmDao
+import com.geekydroid.materialclock.application.db.dao.ScheduledAlarmDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +27,12 @@ class DatabaseModule {
     @Singleton
     fun providesAlarmDao(database: AppDatabase): AlarmDao {
         return database.alarmDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesScheduledAlarmDao(database: AppDatabase) : ScheduledAlarmDao {
+        return database.scheduledAlarmDao()
     }
 
 }

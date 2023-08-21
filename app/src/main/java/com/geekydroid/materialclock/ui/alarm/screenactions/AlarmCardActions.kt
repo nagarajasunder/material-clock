@@ -12,6 +12,6 @@ interface AlarmCardActions {
     fun onAlarmScheduledDaysChange(index: Int, selectedDay: WeekDay)
     fun onScheduleAlarmClicked(index: Int)
     fun onVibrationStatusChange(index: Int,newStatus:Boolean)
-    fun onDismissClicked(index: Int)
+    fun onSnoozeCancelled(index:Int)
     fun onDeleteClicked(index: Int)
 }

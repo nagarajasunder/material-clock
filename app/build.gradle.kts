@@ -34,6 +34,7 @@ android {
     }
     buildFeatures {
         compose = true
+        dataBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.composeVersion.get()
@@ -48,6 +49,7 @@ android {
 
 dependencies {
 
+    implementation("com.google.android.material:material:1.5.0")
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.material.three)
     implementation(libs.androidx.activity.compose)

@@ -20,5 +20,7 @@ data class AlarmUiData(
   val alarmScheduleText: String = "",
   val alarmSnoozeText: String = "",
   val showAlarmDismissCta: Boolean = false,
-  val isAlarmVibrate: Boolean = false
+  val isAlarmVibrate: Boolean = false,
+  val isAlarmSnooze:Boolean = false,
+  val alarmSnoozeMillis:Long = 0L
 )
