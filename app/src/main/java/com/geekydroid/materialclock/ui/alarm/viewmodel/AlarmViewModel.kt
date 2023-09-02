@@ -101,6 +101,7 @@ class AlarmViewModel @Inject constructor(
                 ),
                 isAlarmVibrate = alarmMaster.isAlarmVibrate,
                 isAlarmSnooze = alarmMaster.isSnoozed,
+                alarmSoundIndex = alarmMaster.alarmSoundIndex,
                 alarmSnoozeMillis = alarmMaster.snoozeMillis
             )
             alarmUiDataList.add(alarmUiData)
@@ -144,6 +145,7 @@ class AlarmViewModel @Inject constructor(
                     alarmScheduleType = AlarmScheduleType.ONCE,
                     alarmSnoozeText = "",
                     showAlarmDismissCta = false,
+                    alarmSoundIndex = 0,
                     isAlarmVibrate = false,
                 )
             insertNewAlarm(newAlarm)
@@ -459,6 +461,7 @@ class AlarmViewModel @Inject constructor(
             alarmTriggerMillis = alarmUiData.alarmTimeInMills,
             alarmScheduledDays = alarmUiData.alarmScheduledDays,
             alarmType = alarmUiData.alarmScheduleType,
+            alarmSoundIndex = alarmUiData.alarmSoundIndex,
             isAlarmVibrate = alarmUiData.isAlarmVibrate,
             createdOn = System.currentTimeMillis(),
             updatedOn = System.currentTimeMillis()
@@ -487,6 +490,13 @@ class AlarmViewModel @Inject constructor(
                 }
 
             }
+        }
+    }
+
+    override fun onAlarmSoundChange(index: Int) {
+        viewModelScope.launch {
+            val selectedAlarm = alarmUiDataList.value[index]
+            eventsChannel.send(AlarmScreenEvents.OpenAlarmSoundScreen(selectedAlarm.alarmId))
         }
     }
 

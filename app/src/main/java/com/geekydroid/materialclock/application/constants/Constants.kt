@@ -1,5 +1,8 @@
 package com.geekydroid.materialclock.application.constants
 
+import com.geekydroid.materialclock.R
+import com.geekydroid.materialclock.ui.alarm.model.AlarmSound
+
 object Constants {
 
 
@@ -30,4 +33,10 @@ object Constants {
     const val ALARM_ACTION_STOP_PENDING_INTENT_ID = 39
     const val SNOOZE_ALARM_ID = 117
     const val REMINDER_ALARM_ID = 71
+    const val ARG_ALARM_ID = "ALARM_ID"
+    const val ARG_HIDE_BOTTOM_BAR = "HIDE_BOTTOM_BAR"
+    val alarmSoundsList = listOf(
+        AlarmSound(0, R.raw.alarmsound1,"Default"),
+        AlarmSound(1, R.raw.alarmsound2,"Rise"),
+    )
 }

@@ -23,4 +23,6 @@
     <string name="stop">Stop</string>
     <string name="snooze">Snooze</string>
     <string name="snoozed_until">Snoozed Until %1s</string>
+    <string name="alarm_sound">Alarm Sound</string>
+    <string name="device_sounds">Device Sounds</string>
 </resources>

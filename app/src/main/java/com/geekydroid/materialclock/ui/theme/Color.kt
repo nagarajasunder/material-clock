@@ -69,6 +69,8 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 val week_day_highlight_color = Color(0xFF00C4FF)
 
+val blue = Color(0xFF3250FA)
+
 
 val seed = Color(0xFF6750A4)
 val weekDaySelectedColor = Color(0xFFA7ECEE)

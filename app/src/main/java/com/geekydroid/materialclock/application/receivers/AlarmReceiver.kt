@@ -96,6 +96,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduleType = alarmScheduleType,
                         isAlarmVibrate = isAlarmVibrate
                     )
+                    AlarmNotificationHelper.playSound(context,0)
                     scheduleNextAlarm(
                         context = context,
                         alarmId = alarmId,
@@ -152,6 +153,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     )
                 }
                 AlarmActionType.SNOOZE -> {
+                    AlarmNotificationHelper.stopSound()
                     AlarmNotificationHelper.cancelNotification(context!!,alarmId)
                     val snoozeTriggerMillis =  AlarmUtils.getAlarmSnoozeTime()
                     AlarmScheduler.scheduleAlarm(
@@ -187,6 +189,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
                 }
                 AlarmActionType.STOP -> {
+                    AlarmNotificationHelper.stopSound()
                     AlarmNotificationHelper.cancelNotification(context!!,alarmId)
                     AlarmNotificationHelper.cancelNotification(context,alarmId)
                 }
@@ -227,6 +230,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduledDays = alarmScheduleDays,
                         alarmType = alarmScheduleType,
                         isAlarmVibrate = alarmVibrate,
+                        alarmSoundIndex = 0,
                         createdOn = System.currentTimeMillis(),
                         updatedOn = System.currentTimeMillis()
                     )
@@ -244,6 +248,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduledDays = alarmScheduleDays,
                         alarmType = alarmScheduleType,
                         isAlarmVibrate = alarmVibrate,
+                        alarmSoundIndex = 0,
                         createdOn = System.currentTimeMillis(),
                         updatedOn = System.currentTimeMillis()
                     )
@@ -277,6 +282,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduledDays = alarmScheduleDays,
                         alarmType = alarmScheduleType,
                         isAlarmVibrate = alarmVibrate,
+                        alarmSoundIndex = 0,
                         createdOn = System.currentTimeMillis(),
                         updatedOn = System.currentTimeMillis()
                     )

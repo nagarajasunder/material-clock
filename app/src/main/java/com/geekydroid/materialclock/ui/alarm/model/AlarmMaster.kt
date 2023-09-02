@@ -27,6 +27,8 @@ data class AlarmMaster(
     val alarmType: AlarmScheduleType,
     @ColumnInfo("is_alarm_vibrate")
     val isAlarmVibrate: Boolean,
+    @ColumnInfo("alarm_sound_index")
+    val alarmSoundIndex:Int,
     @ColumnInfo("is_snoozed")
     val isSnoozed: Boolean = false,
     @ColumnInfo("snooze_millis")

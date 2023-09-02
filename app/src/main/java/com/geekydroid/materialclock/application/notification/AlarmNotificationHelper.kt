@@ -5,11 +5,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.media.MediaPlayer
 import android.widget.RemoteViews
+import androidx.annotation.RawRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
+import com.geekydroid.materialclock.application.constants.Constants.alarmSoundsList
 import com.geekydroid.materialclock.application.receivers.AlarmReceiver
 import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
@@ -20,6 +23,7 @@ import com.geekydroid.materialclock.ui.alarm.model.AlarmType
 object AlarmNotificationHelper {
 
 
+    private var mediaPlayer: MediaPlayer? = null
 
     fun postAlarmNotification(
         context: Context,
@@ -223,6 +227,21 @@ object AlarmNotificationHelper {
         val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
 
+    }
+
+    fun playSound(context:Context, id:Int) {
+       if (mediaPlayer == null) {
+           @RawRes val soundFile = alarmSoundsList[id].soundFile
+           mediaPlayer = MediaPlayer.create(context,soundFile)
+           mediaPlayer?.isLooping = true
+           mediaPlayer?.start()
+       }
+    }
+
+    fun stopSound() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
 }

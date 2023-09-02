@@ -20,17 +20,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.geekydroid.materialclock.application.utils.AlarmScheduler
 import com.geekydroid.materialclock.ui.alarm.model.AlarmScreenData
 import com.geekydroid.materialclock.ui.alarm.screenevents.AlarmScreenEvents
 import com.geekydroid.materialclock.ui.alarm.viewmodel.AlarmViewModel
 
-private const val TAG = "AlarmScreen"
+
 
 @Composable
 fun AlarmScreenContent(
     modifier: Modifier = Modifier,
-    viewModel: AlarmViewModel = hiltViewModel()
+    viewModel: AlarmViewModel = hiltViewModel(),
+    navHostController: NavHostController,
 ) {
 
     val context: Context = LocalContext.current
@@ -61,6 +63,10 @@ fun AlarmScreenContent(
 
                 is AlarmScreenEvents.CancelSnoozedAlarm -> {
                     AlarmScheduler.cancelSnoozedAlarm(context,event.alarmId)
+                }
+
+                is AlarmScreenEvents.OpenAlarmSoundScreen -> {
+                    navHostController.navigate(buildAlarmSoundScreenRoute(event.alarmId,true))
                 }
             }
         }
@@ -122,6 +128,7 @@ fun AlarmScreenContent(
                     vibrateStatus = currentAlarmData.isAlarmVibrate,
                     alarmExpanded = alarmScreenData.expandedAlarmIndex == index,
                     isSnoozed = currentAlarmData.isAlarmSnooze,
+                    alarmSoundIndex = currentAlarmData.alarmSoundIndex,
                     alarmSnoozeMillis = currentAlarmData.alarmSnoozeMillis,
                     onAddLabelClicked = {
                         viewModel.onAddLabelClicked(index)
@@ -140,6 +147,9 @@ fun AlarmScreenContent(
                     },
                     onScheduleAlarmClicked = {
                         viewModel.onScheduleAlarmClicked(index)
+                    },
+                    onAlarmSoundChange = {
+                         viewModel.onAlarmSoundChange(index)
                     },
                     onVibrateStatusChange = { newStatus ->
                         viewModel.onVibrationStatusChange(index, newStatus)
