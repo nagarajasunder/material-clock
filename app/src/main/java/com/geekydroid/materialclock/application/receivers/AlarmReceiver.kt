@@ -18,7 +18,9 @@ import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -54,6 +56,10 @@ class AlarmReceiver : BroadcastReceiver() {
             val alarmDateMillis = intent.getLongExtra(Constants.KEY_ALARM_SCHEDULE_DATE_MILLIS, -1L)
             val alarmTimeMillis = intent.getLongExtra(Constants.KEY_ALARM_SCHEDULE_TIME_MILLIS, -1L)
             val alarmTriggerMillis = intent.getLongExtra(Constants.KEY_ALARM_TRIGGER_MILLIS, -1L)
+            var alarmSoundId = 0
+            runBlocking {
+                alarmSoundId = alarmRepository.getAlarmSoundId(alarmId).first()
+            }
 
 
             when(alarmType) {
@@ -96,7 +102,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduleType = alarmScheduleType,
                         isAlarmVibrate = isAlarmVibrate
                     )
-                    AlarmNotificationHelper.playSound(context,0)
+                    AlarmNotificationHelper.playSound(context,alarmSoundId)
                     scheduleNextAlarm(
                         context = context,
                         alarmId = alarmId,
@@ -121,6 +127,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduleType = alarmScheduleType,
                         isAlarmVibrate = isAlarmVibrate
                     )
+                    AlarmNotificationHelper.playSound(context,alarmSoundId)
                     updateSnoozeDetails(
                         alarmId = alarmId,
                         alarmScheduleType = alarmScheduleType,

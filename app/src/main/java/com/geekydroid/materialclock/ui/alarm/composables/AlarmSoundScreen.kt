@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,6 +90,12 @@ fun AlarmSoundScreen(
         viewModel.setAlarmId(alarmId)
     }
 
+    DisposableEffect(key1 = Unit, effect = {
+        onDispose {
+            AlarmNotificationHelper.stopSound()
+        }
+    })
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -129,13 +136,12 @@ fun AlarmSoundScreen(
                 AlarmSoundCard(
                     soundLabel = alarmSound.soundLabel,
                     onSoundClicked = { isPlaying ->
-                        if (!isPlaying) {
+                        AlarmNotificationHelper.stopSound()
+                        playIndex = if (isPlaying) {
+                            -1
+                        } else {
                             AlarmNotificationHelper.playSound(context,alarmSound.soundId)
-                            playIndex = it
-                        }
-                        else {
-                            AlarmNotificationHelper.stopSound()
-                            playIndex = -1
+                            it
                         }
                         viewModel.updateAlarmSoundId(soundId =alarmSound.soundId)
                     },

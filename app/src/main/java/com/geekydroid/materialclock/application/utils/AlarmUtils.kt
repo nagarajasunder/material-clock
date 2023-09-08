@@ -6,6 +6,8 @@ import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
 import java.util.Calendar
 
+private const val TAG = "AlarmUtils"
+
 
 object AlarmUtils {
 
@@ -23,7 +25,7 @@ object AlarmUtils {
          * scheduling the alarm for next day
          */
         val finalAlarmTimeMillis = if (alarmTimeMillis < System.currentTimeMillis())
-            alarmTimeMillis + AlarmManager.INTERVAL_DAY
+            getSameTimeInMillisForNextDay(alarmTimeMillis)
         else
             alarmTimeMillis
 
@@ -38,8 +40,17 @@ object AlarmUtils {
                 getAlarmTimeForRepeatedAlarm(alarmScheduleDays,finalAlarmTimeMillis)
             }
         }
-
         return result
+    }
+
+    private fun getSameTimeInMillisForNextDay(alarmTimeMillis: Long): Long {
+        val timeCalendar = Calendar.getInstance()
+        timeCalendar.timeInMillis = alarmTimeMillis
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY))
+        calendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE))
+        calendar.set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND))
+        return calendar.timeInMillis + AlarmManager.INTERVAL_DAY
     }
 
     fun getDateTimeFromDateAndTime(dateMillis: Long, timeMillis: Long): Long {
@@ -89,7 +100,7 @@ object AlarmUtils {
     }
 
     fun isEligibleForReminderAlarm(alarmTriggerMillis:Long) : Boolean {
-        return alarmTriggerMillis > (System.currentTimeMillis() + (Constants.ALARM_REMINDER_HOUR*60_000))
+        return alarmTriggerMillis > (System.currentTimeMillis() + (Constants.ALARM_REMINDER_HOUR*AlarmManager.INTERVAL_HOUR))
     }
 
     fun getAlarmSnoozeTime(): Long {
