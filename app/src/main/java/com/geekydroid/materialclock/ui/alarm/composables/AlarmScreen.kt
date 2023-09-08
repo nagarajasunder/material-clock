@@ -1,7 +1,15 @@
 package com.geekydroid.materialclock.ui.alarm.composables
 
 import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,21 +19,29 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.utils.AlarmScheduler
 import com.geekydroid.materialclock.ui.alarm.model.AlarmScreenData
 import com.geekydroid.materialclock.ui.alarm.screenevents.AlarmScreenEvents
 import com.geekydroid.materialclock.ui.alarm.viewmodel.AlarmViewModel
-
 
 
 @Composable
@@ -58,15 +74,15 @@ fun AlarmScreenContent(
                 }
 
                 is AlarmScreenEvents.CancelAlarm -> {
-                    AlarmScheduler.cancelAlarm(context,event.alarmId)
+                    AlarmScheduler.cancelAlarm(context, event.alarmId)
                 }
 
                 is AlarmScreenEvents.CancelSnoozedAlarm -> {
-                    AlarmScheduler.cancelSnoozedAlarm(context,event.alarmId)
+                    AlarmScheduler.cancelSnoozedAlarm(context, event.alarmId)
                 }
 
                 is AlarmScreenEvents.OpenAlarmSoundScreen -> {
-                    navHostController.navigate(buildAlarmSoundScreenRoute(event.alarmId,true))
+                    navHostController.navigate(buildAlarmSoundScreenRoute(event.alarmId, true))
                 }
             }
         }
@@ -113,6 +129,49 @@ fun AlarmScreenContent(
                         onConfirmed = viewModel::onDatePickerConfirmed
                     )
                 }
+                else if (alarmData.isEmpty()) {
+                    Column(
+                        Modifier.fillParentMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                modifier = Modifier.size(100.dp),
+                                painter = painterResource(id = R.drawable.baseline_no_alarm_24),
+                                contentDescription = stringResource(
+                                    id = R.string.no_alarm
+                                ),
+                                colorFilter = ColorFilter.tint(color = Color.DarkGray)
+                            )
+                            Image(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .padding(
+                                        top = 32.dp,
+                                        bottom = 26.dp,
+                                        start = 26.dp,
+                                        end = 26.dp
+                                    ),
+                                painter = painterResource(id = R.drawable.close_24px),
+                                contentDescription = stringResource(
+                                    id = R.string.no_alarm
+                                ),
+                                colorFilter = ColorFilter.tint(color = Color.DarkGray)
+                            )
+                        }
+                        Text(
+                            text = stringResource(id = R.string.no_alarm),
+                            style = MaterialTheme.typography.bodyLarge.copy(color = Color.DarkGray)
+                        )
+                    }
+                }
+            }
+            item {
+
             }
 
             items(alarmData.size) { index ->
@@ -149,7 +208,7 @@ fun AlarmScreenContent(
                         viewModel.onScheduleAlarmClicked(index)
                     },
                     onAlarmSoundChange = {
-                         viewModel.onAlarmSoundChange(index)
+                        viewModel.onAlarmSoundChange(index)
                     },
                     onVibrateStatusChange = { newStatus ->
                         viewModel.onVibrationStatusChange(index, newStatus)

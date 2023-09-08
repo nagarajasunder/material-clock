@@ -25,4 +25,5 @@
     <string name="snoozed_until">Snoozed Until %1s</string>
     <string name="alarm_sound">Alarm Sound</string>
     <string name="device_sounds">Device Sounds</string>
+    <string name="no_alarm">No Alarms</string>
 </resources>
