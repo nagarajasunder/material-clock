@@ -11,4 +11,6 @@ sealed interface AlarmScreenEvents {
 
     data class OpenAlarmSoundScreen(val alarmId:Int) : AlarmScreenEvents
 
+    data class ShowToast(val message:String) : AlarmScreenEvents
+
 }

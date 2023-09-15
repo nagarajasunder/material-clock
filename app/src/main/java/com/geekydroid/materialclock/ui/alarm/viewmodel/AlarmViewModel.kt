@@ -159,6 +159,7 @@ class AlarmViewModel @Inject constructor(
         val alarmMaster: AlarmMaster = transformAlarmUiDataToAlarmMaster(newAlarm)
         val alarmId = alarmRepository.insertNewAlarm(alarmMaster)
         eventsChannel.send(AlarmScreenEvents.ScheduleAlarm(alarmMaster.copy(alarmId = alarmId.toInt())))
+        eventsChannel.send(AlarmScreenEvents.ShowToast(AlarmUtils.getAlarmTimeDifferenceText(alarmMaster.alarmTriggerMillis)))
     }
 
     override fun onAlarmTimeTextClicked(index: Int) {
@@ -199,8 +200,7 @@ class AlarmViewModel @Inject constructor(
                 var selectedAlarm = alarmUiDataList.value[alarmTimeIndex]
                 selectedAlarm = selectedAlarm.copy(
                     alarmTimeText = getAlarmTimeText(calendar.timeInMillis),
-                    alarmTimeInMills = calendar.timeInMillis,
-                    alarmDateInMillis = calendar.timeInMillis
+                    alarmTimeInMills = calendar.timeInMillis
                 )
                 updateAlarmsList(selectedAlarm, rescheduleAlarm = true)
             }
@@ -437,9 +437,10 @@ class AlarmViewModel @Inject constructor(
             }
 
             AlarmScheduleType.SCHEDULE_ONCE -> {
+                val scheduleString = TimeUtils.getFormattedTime(TIME_FORMATS.MMM_DD_YYYY, alarmDateMillis).replace(", ${TimeUtils.getFormattedTime(TIME_FORMATS.YYYY,System.currentTimeMillis())}","",true)
                 resourceProvider.getString(
                     R.string.scheduled_for,
-                    TimeUtils.getFormattedTime(TIME_FORMATS.MMM_DD, alarmDateMillis)
+                    scheduleString
                 )
             }
 
@@ -463,6 +464,7 @@ class AlarmViewModel @Inject constructor(
             alarmRepository.updateExistingAlarm(alarmMaster)
             if (rescheduleAlarm && alarmMaster.alarmStatus == AlarmStatus.ON) {
                 eventsChannel.send(AlarmScreenEvents.ScheduleAlarm(alarmMaster))
+                eventsChannel.send(AlarmScreenEvents.ShowToast(AlarmUtils.getAlarmTimeDifferenceText(alarmMaster.alarmTriggerMillis)))
             }
         }
     }
@@ -487,25 +489,23 @@ class AlarmViewModel @Inject constructor(
     override fun onScheduleAlarmClicked(index: Int) {
         viewModelScope.launch {
             val selectedAlarm = alarmUiDataList.value[index]
-            when (selectedAlarm.alarmScheduleType) {
-                AlarmScheduleType.ONCE, AlarmScheduleType.REPEATED -> {
-                    toggleSelectedAlarmIndex(index)
-                    _alarmScreenData.update {
-                        showDatePicker(selectedAlarm, it)
-                    }
-                }
-
-                AlarmScheduleType.SCHEDULE_ONCE -> {
-                    updateAlarmsList(
-                        selectedAlarm = selectedAlarm.copy(
-                            alarmScheduleType = AlarmScheduleType.ONCE,
-                            alarmDateInMillis = selectedAlarm.alarmTimeInMills
-                        ),
-                        rescheduleAlarm = (selectedAlarm.alarmStatus == AlarmStatus.ON)
-                    )
-                }
-
+            toggleSelectedAlarmIndex(index)
+            _alarmScreenData.update {
+                showDatePicker(selectedAlarm, it)
             }
+        }
+    }
+
+    override fun onScheduleAlarmCancelled(index:Int) {
+        viewModelScope.launch {
+            val selectedAlarm = alarmUiDataList.value[index]
+            updateAlarmsList(
+                selectedAlarm = selectedAlarm.copy(
+                    alarmScheduleType = AlarmScheduleType.ONCE,
+                    alarmDateInMillis = selectedAlarm.alarmTimeInMills
+                ),
+                rescheduleAlarm = (selectedAlarm.alarmStatus == AlarmStatus.ON)
+            )
         }
     }
 

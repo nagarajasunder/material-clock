@@ -1,13 +1,11 @@
 package com.geekydroid.materialclock.ui.alarm.composables
 
 import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,7 +30,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -83,6 +80,10 @@ fun AlarmScreenContent(
 
                 is AlarmScreenEvents.OpenAlarmSoundScreen -> {
                     navHostController.navigate(buildAlarmSoundScreenRoute(event.alarmId, true))
+                }
+
+                is AlarmScreenEvents.ShowToast -> {
+                    Toast.makeText(context,event.message,Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -206,6 +207,9 @@ fun AlarmScreenContent(
                     },
                     onScheduleAlarmClicked = {
                         viewModel.onScheduleAlarmClicked(index)
+                    },
+                    onScheduleAlarmCancelled = {
+                        viewModel.onScheduleAlarmCancelled(index)
                     },
                     onAlarmSoundChange = {
                         viewModel.onAlarmSoundChange(index)

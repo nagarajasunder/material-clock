@@ -5,6 +5,7 @@ import android.app.AlarmManager
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
 import java.util.Calendar
+import java.util.Date
 
 private const val TAG = "AlarmUtils"
 
@@ -41,6 +42,33 @@ object AlarmUtils {
             }
         }
         return result
+    }
+
+    fun getAlarmTimeDifferenceText(
+        alarmTriggerMillis: Long
+    ) : String {
+        val now = Date()
+        val alarmTriggerTime = Date(alarmTriggerMillis)
+        val diffInMillis = alarmTriggerTime.time - now.time
+        val diffInDays = (diffInMillis/(24*60*60*1000))
+        val diffInHours = (diffInMillis/(60*60*1000))%24
+        val diffInMinutes = (diffInMillis/(60*1000))%60
+        var triggerText = "Alarm is set for "
+        if (diffInDays > 0L) {
+            triggerText+="$diffInDays days "
+        }
+        if (diffInHours > 0L) {
+            triggerText+="$diffInHours hours "
+        }
+        if (diffInMinutes > 0L) {
+            triggerText+="$diffInMinutes minutes "
+        }
+        return if (triggerText == "Alarm is set for ") {
+            "Alarm is set less than one minute from now"
+        } else {
+            triggerText+="from now"
+            triggerText
+        }
     }
 
     private fun getSameTimeInMillisForNextDay(alarmTimeMillis: Long): Long {

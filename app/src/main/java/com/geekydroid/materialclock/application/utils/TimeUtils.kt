@@ -24,9 +24,10 @@ object TimeUtils {
     fun getFormattedTime(timeFormat: TIME_FORMATS,timeInMillis:Long) : String {
         val timeFormatStr = when(timeFormat) {
             TIME_FORMATS.HH_MM -> "HH:mm"
-            TIME_FORMATS.MMM_DD -> "MMM dd"
+            TIME_FORMATS.MMM_DD_YYYY -> "MMM dd, yyyy"
             TIME_FORMATS.EEE_HH_MM -> "EEE, HH:mm a"
             TIME_FORMATS.DD_MM_YYYY -> "dd/MM/yyyy"
+            TIME_FORMATS.YYYY -> "yyyy"
         }
         return SimpleDateFormat(timeFormatStr, Locale.ENGLISH).format(timeInMillis)
     }
@@ -40,7 +41,8 @@ object TimeUtils {
 
 enum class TIME_FORMATS {
     HH_MM,
-    MMM_DD,
+    MMM_DD_YYYY,
     EEE_HH_MM,
-    DD_MM_YYYY
+    DD_MM_YYYY,
+    YYYY
 }
