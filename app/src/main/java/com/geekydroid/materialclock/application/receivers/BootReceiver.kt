@@ -3,6 +3,7 @@ package com.geekydroid.materialclock.application.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import com.geekydroid.materialclock.application.di.ApplicationScope
 import com.geekydroid.materialclock.application.di.IoDispatcher
 import com.geekydroid.materialclock.application.utils.AlarmScheduler
@@ -28,7 +29,12 @@ class BootReceiver : BroadcastReceiver() {
     lateinit var externalDispatcher: CoroutineDispatcher
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == "android.intent.action.QUICKBOOT_POWERON") {
+        if (intent?.action == Intent.ACTION_BOOT_COMPLETED ||
+            intent?.action == Intent.ACTION_LOCKED_BOOT_COMPLETED ||
+            intent?.action == "android.intent.action.QUICKBOOT_POWERON" ||
+            intent?.action == "android.intent.action.REBOOT"
+        ) {
+            Toast.makeText(context!!,"Boot Received",Toast.LENGTH_SHORT).show()
             rescheduleAlarms(context!!)
 
         }
