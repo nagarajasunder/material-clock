@@ -20,6 +20,9 @@ interface AlarmDao {
     @Query("SELECT * FROM MC_ALARM_MASTER")
     fun getAllAlarms(): Flow<List<AlarmMaster>>
 
+    @Query("SELECT * FROM MC_ALARM_MASTER WHERE alarm_status = :alarmStatus")
+    suspend fun getAllActiveAlarms(alarmStatus:AlarmStatus = AlarmStatus.ON): List<AlarmMaster>
+
     @Query("DELETE FROM MC_ALARM_MASTER WHERE alarm_id = :alarmId")
     suspend fun deleteAlarmById(alarmId: Int)
 
