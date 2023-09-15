@@ -25,4 +25,10 @@ interface AlarmDao {
 
     @Query("UPDATE MC_ALARM_MASTER SET is_snoozed = :snoozed , alarm_status = :alarmStatus,  snooze_millis = :snoozeMillis WHERE alarm_id = :alarmId")
     suspend fun updateSnoozeDetails(alarmId: Int,alarmStatus: AlarmStatus,snoozed:Boolean,snoozeMillis:Long)
+
+    @Query("UPDATE MC_ALARM_MASTER SET alarm_sound_index = :soundId WHERE alarm_id = :alarmId")
+    suspend fun updateAlarmSoundId(alarmId: Int,soundId:Int)
+
+    @Query("SELECT alarm_sound_index FROM MC_ALARM_MASTER WHERE alarm_id = :alarmId")
+    fun getAlarmSoundId(alarmId:Int) : Flow<Int>
 }

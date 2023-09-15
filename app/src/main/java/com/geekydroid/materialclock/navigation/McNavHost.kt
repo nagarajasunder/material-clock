@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.geekydroid.materialclock.ui.alarm.composables.alarmSoundScreen
 import com.geekydroid.materialclock.ui.alarm.navigation.alarmScreen
 import com.geekydroid.materialclock.ui.stopwatch.navigation.stopwatchScreen
 import com.geekydroid.materialclock.ui.timer.navigation.timerScreen
@@ -20,9 +21,10 @@ fun McNavHost(
         navController = navController,
         startDestination = startDestination,
         builder = {
-            alarmScreen()
+            alarmScreen(navHostController = navController)
             stopwatchScreen()
             timerScreen()
+            alarmSoundScreen(navController)
         }
     )
 

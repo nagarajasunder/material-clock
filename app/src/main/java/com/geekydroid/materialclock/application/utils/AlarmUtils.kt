@@ -5,6 +5,9 @@ import android.app.AlarmManager
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
 import java.util.Calendar
+import java.util.Date
+
+private const val TAG = "AlarmUtils"
 
 
 object AlarmUtils {
@@ -23,7 +26,7 @@ object AlarmUtils {
          * scheduling the alarm for next day
          */
         val finalAlarmTimeMillis = if (alarmTimeMillis < System.currentTimeMillis())
-            alarmTimeMillis + AlarmManager.INTERVAL_DAY
+            getSameTimeInMillisForNextDay(alarmTimeMillis)
         else
             alarmTimeMillis
 
@@ -38,8 +41,44 @@ object AlarmUtils {
                 getAlarmTimeForRepeatedAlarm(alarmScheduleDays,finalAlarmTimeMillis)
             }
         }
-
         return result
+    }
+
+    fun getAlarmTimeDifferenceText(
+        alarmTriggerMillis: Long
+    ) : String {
+        val now = Date()
+        val alarmTriggerTime = Date(alarmTriggerMillis)
+        val diffInMillis = alarmTriggerTime.time - now.time
+        val diffInDays = (diffInMillis/(24*60*60*1000))
+        val diffInHours = (diffInMillis/(60*60*1000))%24
+        val diffInMinutes = (diffInMillis/(60*1000))%60
+        var triggerText = "Alarm is set for "
+        if (diffInDays > 0L) {
+            triggerText+="$diffInDays days "
+        }
+        if (diffInHours > 0L) {
+            triggerText+="$diffInHours hours "
+        }
+        if (diffInMinutes > 0L) {
+            triggerText+="$diffInMinutes minutes "
+        }
+        return if (triggerText == "Alarm is set for ") {
+            "Alarm is set less than one minute from now"
+        } else {
+            triggerText+="from now"
+            triggerText
+        }
+    }
+
+    private fun getSameTimeInMillisForNextDay(alarmTimeMillis: Long): Long {
+        val timeCalendar = Calendar.getInstance()
+        timeCalendar.timeInMillis = alarmTimeMillis
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY))
+        calendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE))
+        calendar.set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND))
+        return calendar.timeInMillis + AlarmManager.INTERVAL_DAY
     }
 
     fun getDateTimeFromDateAndTime(dateMillis: Long, timeMillis: Long): Long {
@@ -89,7 +128,7 @@ object AlarmUtils {
     }
 
     fun isEligibleForReminderAlarm(alarmTriggerMillis:Long) : Boolean {
-        return alarmTriggerMillis > (System.currentTimeMillis() + (Constants.ALARM_REMINDER_HOUR*60_000))
+        return alarmTriggerMillis > (System.currentTimeMillis() + (Constants.ALARM_REMINDER_HOUR*AlarmManager.INTERVAL_HOUR))
     }
 
     fun getAlarmSnoozeTime(): Long {

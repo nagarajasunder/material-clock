@@ -37,7 +37,7 @@ object AlarmScheduler {
 
         if (AlarmUtils.isEligibleForReminderAlarm(finalAlarmTriggerMillis)) {
             Log.d(TAG, "scheduleAlarmWithReminder: isEligible")
-            finalAlarmTriggerMillis = alarmTriggerMillis - (Constants.ALARM_REMINDER_HOUR*60_000)
+            finalAlarmTriggerMillis = alarmTriggerMillis - (Constants.ALARM_REMINDER_HOUR*AlarmManager.INTERVAL_HOUR)
             alarmType = AlarmType.REMINDER
         }
         else {

@@ -46,4 +46,14 @@ class AlarmRepository @Inject constructor(
         }
     }
 
+    suspend fun updateAlarmSoundId(alarmId: Int,soundId:Int) {
+        externalScope.launch(externalDispatcher) {
+            alarmDao.updateAlarmSoundId(alarmId,soundId)
+        }
+    }
+
+    fun getAlarmSoundId(alarmId: Int) : Flow<Int> {
+        return alarmDao.getAlarmSoundId(alarmId)
+    }
+
 }

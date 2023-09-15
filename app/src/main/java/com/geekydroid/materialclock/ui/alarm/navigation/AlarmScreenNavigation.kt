@@ -1,17 +1,17 @@
 package com.geekydroid.materialclock.ui.alarm.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScreenContent
 
 const val alarmScreenRoute = "alarm_route"
 
-fun NavGraphBuilder.alarmScreen() {
+fun NavGraphBuilder.alarmScreen(navHostController: NavHostController) {
     composable(
         route = alarmScreenRoute
     ) {
-        AlarmScreenContent()
+        AlarmScreenContent(navHostController = navHostController)
     }
 }
 

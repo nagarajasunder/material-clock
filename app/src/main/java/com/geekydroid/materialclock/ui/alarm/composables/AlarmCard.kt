@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
+import com.geekydroid.materialclock.application.constants.Constants.alarmSoundsList
 import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
 import com.geekydroid.materialclock.ui.theme.alarmCardContainerColor
@@ -83,6 +84,7 @@ fun AlarmCard(
     vibrateStatus: Boolean,
     alarmExpanded: Boolean,
     isSnoozed : Boolean,
+    alarmSoundIndex:Int,
     alarmSnoozeMillis : Long,
     onAddLabelClicked: () -> Unit,
     onCollapseClicked: () -> Unit,
@@ -90,12 +92,16 @@ fun AlarmCard(
     onAlarmStatusChange: (AlarmStatus) -> Unit,
     onDaysSelected: (WeekDay) -> Unit,
     onScheduleAlarmClicked: () -> Unit,
+    onScheduleAlarmCancelled: () -> Unit,
+    onAlarmSoundChange: () -> Unit,
     onVibrateStatusChange: (Boolean) -> Unit,
     onSnoozeCancelled: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
 
-    val alarmCollapsedIconAnimatedWidth by animateFloatAsState(targetValue =  if (alarmExpanded) 180f else 0f)
+    val alarmCollapsedIconAnimatedWidth by animateFloatAsState(targetValue =  if (alarmExpanded) 180f else 0f,
+        label = ""
+    )
 
     Card(modifier = modifier
         .fillMaxWidth()
@@ -191,14 +197,18 @@ fun AlarmCard(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable {
-                                onScheduleAlarmClicked()
-                            },
+                            .clip(RoundedCornerShape(8.dp)),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    onScheduleAlarmClicked()
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Icon(
                                 modifier = Modifier.padding(4.dp),
                                 painter = painterResource(id = R.drawable.round_calendar_today_24),
@@ -216,7 +226,33 @@ fun AlarmCard(
                                 AlarmScheduleType.SCHEDULE_ONCE -> painterResource(id = R.drawable.baseline_remove_circle_outline_24)
                                 AlarmScheduleType.REPEATED -> painterResource(id = R.drawable.baseline_add_circle_outline_24)
                             },
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.clickable {
+                                if (alarmScheduleType == AlarmScheduleType.SCHEDULE_ONCE) {
+                                    onScheduleAlarmCancelled()
+                                }
+                            }
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable {
+                                onAlarmSoundChange()
+                            },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(4.dp),
+                            painter = painterResource(id = R.drawable.outline_notifications_24),
+                            contentDescription = "notification"
+                        )
+                        Text(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            text = alarmSoundsList[alarmSoundIndex].soundLabel,
+                            style = MaterialTheme.typography.bodySmall
                         )
                     }
                     Row(
@@ -314,6 +350,7 @@ fun AlarmCardPreview() {
         vibrateStatus = false,
         alarmExpanded = expanded,
         isSnoozed = true,
+        alarmSoundIndex = 0,
         alarmSnoozeMillis = System.currentTimeMillis(),
         onAddLabelClicked = { },
         onCollapseClicked = {
@@ -324,8 +361,10 @@ fun AlarmCardPreview() {
         onDaysSelected = {
         },
         onScheduleAlarmClicked = { },
+        onScheduleAlarmCancelled = {},
         onVibrateStatusChange = {},
         onSnoozeCancelled = {},
+        onAlarmSoundChange = {},
         onDeleteClick = {}
     )
 }
