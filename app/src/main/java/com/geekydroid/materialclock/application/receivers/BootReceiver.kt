@@ -16,7 +16,9 @@ class BootReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED ||
-            intent?.action == Intent.ACTION_REBOOT) {
+            intent?.action == Intent.ACTION_REBOOT ||
+            intent?.action == "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" ||
+            intent?.action == "android.intent.action.MY_PACKAGE_REPLACED") {
             Toast.makeText(context!!,"Boot Received",Toast.LENGTH_SHORT).show()
             rescheduleAlarms()
         }

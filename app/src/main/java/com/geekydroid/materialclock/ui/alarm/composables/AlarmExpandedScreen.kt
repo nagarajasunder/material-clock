@@ -71,7 +71,7 @@ fun AlarmExpandedScreen(
             ) {
                 Text(
                     text = TimeUtils.getFormattedTime(TIME_FORMATS.HH_MM, digitalTime),
-                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground, fontSize = 36.sp),
                     modifier = Modifier.padding(8.dp)
                 )
                 Text(
