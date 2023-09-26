@@ -5,6 +5,14 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32"/>
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:name=".MaterialClockApp"
@@ -16,10 +24,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.MaterialClock"
+        android:installLocation="internalOnly"
         tools:targetApi="31">
         <activity
-            android:name=".ui.alarm.AlarmExpandActivity"
-            android:exported="false" />
+            android:name=".ui.alarm.AlarmFullScreenActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -32,17 +42,19 @@
 
         <receiver
             android:name=".application.receivers.AlarmReceiver"
-            android:enabled="true" />
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.geekydroid.materialclock.ACTION_ALARM_TRIGGER"/>
+            </intent-filter>
+        </receiver>
         <receiver android:name=".application.receivers.BootReceiver"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-                <action android:name="android.intent.action.REBOOT" />
+                <action android:name="android.intent.action.REBOOT"/>
             </intent-filter>
         </receiver>
     </application>

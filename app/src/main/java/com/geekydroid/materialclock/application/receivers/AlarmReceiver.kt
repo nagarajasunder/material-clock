@@ -3,12 +3,21 @@ package com.geekydroid.materialclock.application.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.view.KeyEvent
+import android.widget.Toast
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.di.ApplicationScope
 import com.geekydroid.materialclock.application.di.IoDispatcher
 import com.geekydroid.materialclock.application.notification.AlarmNotificationHelper
+import com.geekydroid.materialclock.application.utils.AlarmActionFlow
 import com.geekydroid.materialclock.application.utils.AlarmScheduler
 import com.geekydroid.materialclock.application.utils.AlarmUtils
+import com.geekydroid.materialclock.application.utils.AlarmUtils.getAlarmActionType
+import com.geekydroid.materialclock.application.utils.AlarmUtils.getAlarmScheduleType
+import com.geekydroid.materialclock.application.utils.AlarmUtils.getAlarmType
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
 import com.geekydroid.materialclock.ui.alarm.model.AlarmActionType
@@ -22,7 +31,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
-
 
 
 @AndroidEntryPoint
@@ -39,9 +47,13 @@ class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var alarmRepository: AlarmRepository
 
+    @Inject
+    lateinit var alarmActionFlow: AlarmActionFlow
+
     
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent != null) {
+            Toast.makeText(context,"The Action is ${intent.action}",Toast.LENGTH_LONG).show()
             val alarmActionTypeStr = intent.getStringExtra(Constants.KEY_ALARM_ACTION_TYPE)?:""
             val alarmActionType = getAlarmActionType(alarmActionTypeStr)
             val alarmId = intent.getIntExtra(Constants.KEY_ALARM_ID, -1)
@@ -103,6 +115,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         isAlarmVibrate = isAlarmVibrate
                     )
                     AlarmNotificationHelper.playSound(context,alarmSoundId)
+                    vibrate(context)
                     scheduleNextAlarm(
                         context = context,
                         alarmId = alarmId,
@@ -127,6 +140,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduleType = alarmScheduleType,
                         isAlarmVibrate = isAlarmVibrate
                     )
+                    vibrate(context)
                     AlarmNotificationHelper.playSound(context,alarmSoundId)
                     updateSnoozeDetails(
                         alarmId = alarmId,
@@ -143,6 +157,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 AlarmActionType.REMINDER_DISMISS -> {
                     AlarmScheduler.cancelAlarm(context!!,alarmId)
                     AlarmNotificationHelper.cancelNotification(context,alarmId)
+                    stopVibrate(context)
                     /**
                      * If we just post a reminder alarm and the user dismisses the alarm and if the alarm is repeating
                      * then we should schedule it next time
@@ -185,7 +200,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduleType = alarmScheduleType,
                         alarmScheduleDays = alarmScheduleDays,
                         isAlarmVibrate = isAlarmVibrate,
-                        alarmType = AlarmType.SNOOZE
+                        alarmType = AlarmType.NA
                     )
                     updateSnoozeDetails(
                         alarmId = alarmId,
@@ -193,12 +208,13 @@ class AlarmReceiver : BroadcastReceiver() {
                         isSnoozed = true,
                         snoozeTriggerMillis = snoozeTriggerMillis
                     )
-
+                    alarmActionFlow.alarmSnoozed()
                 }
                 AlarmActionType.STOP -> {
                     AlarmNotificationHelper.stopSound()
-                    AlarmNotificationHelper.cancelNotification(context!!,alarmId)
+                    stopVibrate(context!!)
                     AlarmNotificationHelper.cancelNotification(context,alarmId)
+                    alarmActionFlow.alarmDismissed()
                 }
 
                 AlarmActionType.SNOOZE_DISMISS -> {
@@ -320,31 +336,23 @@ class AlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun getAlarmScheduleType(alarmScheduleTypeStr: String): AlarmScheduleType {
-        return when (alarmScheduleTypeStr) {
-            AlarmScheduleType.ONCE.name -> AlarmScheduleType.ONCE
-            AlarmScheduleType.SCHEDULE_ONCE.name -> AlarmScheduleType.SCHEDULE_ONCE
-            AlarmScheduleType.REPEATED.name -> AlarmScheduleType.REPEATED
-            else -> AlarmScheduleType.ONCE
+    private fun vibrate(context:Context) {
+
+        val vibratorPattern = longArrayOf(1000,1000)
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                VibrationEffect.createWaveform(vibratorPattern,0)
+            )
+        }
+        else {
+            vibrator.vibrate(1000)
         }
     }
 
-    private fun getAlarmActionType(alarmActionTypeStr:String) : AlarmActionType {
-        return when(alarmActionTypeStr) {
-            AlarmActionType.REMINDER_DISMISS.name -> AlarmActionType.REMINDER_DISMISS
-            AlarmActionType.SNOOZE.name -> AlarmActionType.SNOOZE
-            AlarmActionType.STOP.name -> AlarmActionType.STOP
-            AlarmActionType.SNOOZE_DISMISS.name -> AlarmActionType.SNOOZE_DISMISS
-            else -> AlarmActionType.NA
-        }
+    private fun stopVibrate(context: Context) {
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.cancel()
     }
 
-    private fun getAlarmType(alarmTypeStr: String): AlarmType {
-        return when (alarmTypeStr) {
-            AlarmType.REMINDER.name -> AlarmType.REMINDER
-            AlarmType.ACTUAL.name -> AlarmType.ACTUAL
-            AlarmType.SNOOZE.name -> AlarmType.SNOOZE
-            else -> AlarmType.NA
-        }
-    }
 }

@@ -100,7 +100,8 @@ class AlarmViewModel @Inject constructor(
                     timeInMillis = alarmMaster.alarmTimeInMillis,
                     alarmScheduleDays = alarmMaster.alarmScheduledDays,
                     alarmDateMillis = alarmMaster.alarmDateInMillis,
-                    alarmStatus = alarmMaster.alarmStatus
+                    alarmStatus = alarmMaster.alarmStatus,
+                    isSnoozed = alarmMaster.isSnoozed
                 ),
                 isAlarmVibrate = alarmMaster.isAlarmVibrate,
                 isAlarmSnooze = alarmMaster.isSnoozed,
@@ -328,7 +329,8 @@ class AlarmViewModel @Inject constructor(
                         timeInMillis = selectedAlarm.alarmTimeInMills,
                         alarmScheduleDays = selectedAlarm.alarmScheduledDays,
                         alarmDateMillis = selectedAlarm.alarmDateInMillis,
-                        alarmStatus = newStatus
+                        alarmStatus = newStatus,
+                        isSnoozed = selectedAlarm.isAlarmSnooze
                     )
                 )
             when(newStatus) {
@@ -410,14 +412,19 @@ class AlarmViewModel @Inject constructor(
         timeInMillis: Long,
         alarmScheduleDays: String,
         alarmDateMillis: Long,
-        alarmStatus:AlarmStatus
+        alarmStatus:AlarmStatus,
+        isSnoozed:Boolean
     ): String {
 
         val alarmTriggerMillis = AlarmUtils.getAlarmTimeBasedOnConstraints(
             alarmScheduleType = alarmScheduleType,
             alarmScheduleDays = alarmScheduleDays,
             alarmTimeMillis = timeInMillis,
-            alarmDateMillis = alarmDateMillis
+            alarmDateMillis = alarmDateMillis,
+            /**
+             * We are passing false because we need to keep the Alarm schedule text as `Today` even if the time is passed. This scenario happens when the user snoozes the alarm
+             */
+            addNextDayIfTimeIsPast = !isSnoozed
         )
 
         return when (alarmScheduleType) {
@@ -576,5 +583,4 @@ class AlarmViewModel @Inject constructor(
     private fun toggleAlarmTimeIndex(index: Int) {
         alarmTimeIndex = index
     }
-
 }

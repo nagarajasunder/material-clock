@@ -4,58 +4,25 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.geekydroid.materialclock.application.di.ApplicationScope
-import com.geekydroid.materialclock.application.di.IoDispatcher
-import com.geekydroid.materialclock.application.utils.AlarmScheduler
-import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepository
+import com.geekydroid.materialclock.application.utils.AlarmReScheduler
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BootReceiver : BroadcastReceiver() {
 
-    @Inject
-    lateinit var alarmRepository: AlarmRepository
-
-    @Inject
-    @ApplicationScope
-    lateinit var externalScope: CoroutineScope
-
-    @Inject
-    @IoDispatcher
-    lateinit var externalDispatcher: CoroutineDispatcher
+  @Inject
+  lateinit var alarmReScheduler:AlarmReScheduler
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED ||
-            intent?.action == Intent.ACTION_LOCKED_BOOT_COMPLETED ||
-            intent?.action == "android.intent.action.QUICKBOOT_POWERON" ||
-            intent?.action == "android.intent.action.REBOOT"
-        ) {
+            intent?.action == Intent.ACTION_REBOOT) {
             Toast.makeText(context!!,"Boot Received",Toast.LENGTH_SHORT).show()
-            rescheduleAlarms(context!!)
-
+            rescheduleAlarms()
         }
     }
 
-    private fun rescheduleAlarms(context: Context) {
-        externalScope.launch(externalDispatcher) {
-            val activeAlarms = alarmRepository.getAllActiveAlarms()
-            activeAlarms.forEach { alarm ->
-                AlarmScheduler.scheduleAlarmWithReminder(
-                    context = context,
-                    alarmId = alarm.alarmId,
-                    alarmDateMillis = alarm.alarmDateInMillis,
-                    alarmTimeMillis = alarm.alarmTimeInMillis,
-                    alarmTriggerMillis = alarm.alarmTriggerMillis,
-                    alarmLabel = alarm.alarmLabel,
-                    alarmScheduleDays = alarm.alarmScheduledDays,
-                    alarmScheduleType = alarm.alarmType,
-                    isAlarmVibrate = alarm.isAlarmVibrate
-                )
-            }
-        }
+    private fun rescheduleAlarms() {
+        alarmReScheduler.rescheduleAlarms()
     }
 }
