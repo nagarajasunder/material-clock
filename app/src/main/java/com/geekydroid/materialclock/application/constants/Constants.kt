@@ -39,4 +39,7 @@ object Constants {
         AlarmSound(0, R.raw.alarmsound1,"Default"),
         AlarmSound(1, R.raw.alarmsound2,"Rise"),
     )
+    const val TIMER_DEFAULT_HOUR = 0
+    const val TIMER_DEFAULT_MINUTE = 0
+    const val TIMER_DEFAULT_SECOND = 0
 }
