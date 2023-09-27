@@ -26,4 +26,7 @@
     <string name="alarm_sound">Alarm Sound</string>
     <string name="device_sounds">Device Sounds</string>
     <string name="no_alarm">No Alarms</string>
+    <string name="notification_permission_title">Permission to show notifications</string>
+    <string name="notification_permission_text">To display a popup when the alarm rings, permission to show notifications is required.</string>
+    <string name="notification_permission_denied_message">Notification permission denied. Some functionalities of the app may not work properly</string>
 </resources>

@@ -22,6 +22,8 @@ class AlarmRepository @Inject constructor(
 
     fun getAllAlarms(): Flow<List<AlarmMaster>> = alarmDao.getAllAlarms()
 
+    suspend fun getAllActiveAlarms(): List<AlarmMaster> = alarmDao.getAllActiveAlarms()
+
     suspend fun insertNewAlarm(alarmMaster: AlarmMaster) : Long {
         return withContext(externalScope.coroutineContext + externalDispatcher) {
             alarmDao.insertAlarm(alarmMaster)

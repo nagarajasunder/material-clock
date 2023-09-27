@@ -1,7 +1,11 @@
 package com.geekydroid.materialclock.ui.alarm.composables
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,8 +58,20 @@ fun AlarmScreenContent(
     val context: Context = LocalContext.current
     val alarmData by viewModel.alarmUiDataList.collectAsStateWithLifecycle(initialValue = listOf())
     val alarmScreenData by viewModel.alarmScreenData.collectAsStateWithLifecycle(AlarmScreenData.initialState)
+    var showNotificationPermissionDialog by remember {
+        mutableStateOf(false)
+    }
+    val activityResulLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {permissionResult ->
+        if (!permissionResult) {
+            Toast.makeText(context,
+                context.getString(R.string.notification_permission_denied_message),Toast.LENGTH_LONG).show()
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
+        if (!isNotificationPermissionGiven(context)) {
+            showNotificationPermissionDialog = true
+        }
         viewModel.screenEvents.collect { event ->
             when (event) {
                 is AlarmScreenEvents.ScheduleAlarm -> {
@@ -130,6 +149,17 @@ fun AlarmScreenContent(
                         onConfirmed = viewModel::onDatePickerConfirmed
                     )
                 }
+                else if (showNotificationPermissionDialog) {
+                    OkButtonDialog(
+                        title = context.getString(R.string.notification_permission_title),
+                        message = context.getString(R.string.notification_permission_text)
+                    ) {
+                        showNotificationPermissionDialog = false
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            activityResulLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    }
+                }
                 else if (alarmData.isEmpty()) {
                     Column(
                         Modifier.fillParentMaxSize(),
@@ -170,9 +200,6 @@ fun AlarmScreenContent(
                         )
                     }
                 }
-            }
-            item {
-
             }
 
             items(alarmData.size) { index ->
@@ -228,4 +255,11 @@ fun AlarmScreenContent(
         }
     }
 
+}
+
+fun isNotificationPermissionGiven(context: Context) : Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        return context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+    }
+    return true
 }

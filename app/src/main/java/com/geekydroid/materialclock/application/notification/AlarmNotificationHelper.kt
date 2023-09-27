@@ -1,29 +1,38 @@
 package com.geekydroid.materialclock.application.notification
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.content.res.AssetFileDescriptor
+import android.media.AudioAttributes
+import android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION
+import android.media.AudioAttributes.USAGE_ALARM
 import android.media.MediaPlayer
+import android.net.Uri
+import android.os.Build
 import android.widget.RemoteViews
 import androidx.annotation.RawRes
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.constants.Constants.alarmSoundsList
 import com.geekydroid.materialclock.application.receivers.AlarmReceiver
 import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
+import com.geekydroid.materialclock.ui.alarm.AlarmFullScreenActivity
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
 import com.geekydroid.materialclock.ui.alarm.model.AlarmActionType
 import com.geekydroid.materialclock.ui.alarm.model.AlarmType
 
+private const val TAG = "AlarmNotificationHelper"
+
 object AlarmNotificationHelper {
 
 
-    private var mediaPlayer : MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     fun postAlarmNotification(
         context: Context,
@@ -57,7 +66,7 @@ object AlarmNotificationHelper {
             context,
             (alarmId * Constants.ALARM_ACTION_STOP_PENDING_INTENT_ID),
             stopActionIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            getPendingIntentFlag()
         )
 
 
@@ -78,7 +87,25 @@ object AlarmNotificationHelper {
             context,
             (alarmId * Constants.ALARM_ACTION_SNOOZE_PENDING_INTENT_ID),
             snoozeIntent,
-            PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            getPendingIntentFlag()
+        )
+
+        val contentIntent = Intent(context, AlarmFullScreenActivity::class.java)
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        contentIntent.putExtra(Constants.KEY_ALARM_ID, alarmId)
+        contentIntent.putExtra(Constants.KEY_ALARM_ID, alarmId)
+        contentIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_DATE_MILLIS, alarmDateMillis)
+        contentIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_TIME_MILLIS, alarmTimeMillis)
+        contentIntent.putExtra(Constants.KEY_ALARM_TRIGGER_MILLIS, alarmTriggerMillis)
+        contentIntent.putExtra(Constants.KEY_ALARM_LABEL, alarmLabel)
+        contentIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_TYPE, alarmScheduleType.name)
+        contentIntent.putExtra(Constants.KEY_ALARM_ACTION_TYPE, AlarmActionType.SNOOZE.name)
+        contentIntent.putExtra(Constants.KEY_ALARM_TYPE, AlarmType.NA)
+        contentIntent.putExtra(Constants.KEY_ALARM_SCHEDULE_DAYS, alarmScheduleDays)
+        contentIntent.putExtra(Constants.KEY_IS_ALARM_VIBRATE, isAlarmVibrate)
+        val contentPendingIntent = PendingIntent.getActivity(
+            context, alarmId, contentIntent,
+            getPendingIntentFlag()
         )
 
         val notificationTitle = alarmLabel.ifEmpty { "Alarm" }
@@ -96,12 +123,30 @@ object AlarmNotificationHelper {
 
         val notification =
             NotificationCompat.Builder(context, Constants.ALARM_NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.baseline_access_alarm_24, 1)
-                .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-                .setCustomHeadsUpContentView(notificationLayout)
-                .setCustomContentView(notificationLayout)
-                .setCustomBigContentView(notificationLayout)
+                .setContentTitle(notificationTitle)
+                .setContentText(notificationDescription)
+                .setSmallIcon(R.drawable.baseline_access_alarm_24)
+                .setWhen(0)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setFullScreenIntent(contentPendingIntent, true)
+                .setContentIntent(contentPendingIntent)
+                .setLocalOnly(true)
+                .addAction(
+                    R.drawable.baseline_snooze_24,
+                    context.getString(R.string.snooze),
+                    snoozePendingIntent
+                )
+                .addAction(
+                    R.drawable.ic_action_dismiss,
+                    context.getString(R.string.stop),
+                    stopPendingIntent
+                )
                 .setOngoing(true)
+                .setDefaults(Notification.DEFAULT_LIGHTS)
+                .setSound(null)
+                .setVibrate(longArrayOf(0))
                 .build()
 
         notificationManager.notify(alarmId, notification)
@@ -145,7 +190,7 @@ object AlarmNotificationHelper {
             context,
             Constants.ALARM_DISMISS_PENDING_INTENT_ID * alarmId,
             dismissActionIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            getPendingIntentFlag()
         )
 
         val notificationBuilder =
@@ -165,7 +210,7 @@ object AlarmNotificationHelper {
                 .setSilent(true)
 
         if (isAlarmVibrate) {
-            notificationBuilder.setVibrate(longArrayOf(1000,1000,1000,1000,1000))
+            notificationBuilder.setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
         }
 
         notificationManager.notify(alarmId, notificationBuilder.build())
@@ -212,7 +257,7 @@ object AlarmNotificationHelper {
             context,
             Constants.ALARM_DISMISS_PENDING_INTENT_ID * alarmId,
             dismissActionIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            getPendingIntentFlag()
         )
 
         val notification =
@@ -243,11 +288,20 @@ object AlarmNotificationHelper {
     }
 
     fun playSound(context: Context, id: Int) {
+        mediaPlayer = MediaPlayer()
+        mediaPlayer?.setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(USAGE_ALARM)
+                .setContentType(CONTENT_TYPE_SONIFICATION)
+                .build()
+        )
         @RawRes val soundFile = alarmSoundsList[id].soundFile
-        mediaPlayer = MediaPlayer.create(context, soundFile)
+        context.resources.openRawResourceFd(soundFile)?.let {
+            mediaPlayer?.setDataSource(it.fileDescriptor,it.startOffset,it.length)
+        }
         mediaPlayer?.isLooping = true
+        mediaPlayer?.prepare()
         mediaPlayer?.start()
-
     }
 
     fun stopSound() {
@@ -256,4 +310,11 @@ object AlarmNotificationHelper {
         mediaPlayer = null
     }
 
+    private fun getPendingIntentFlag(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+    }
 }

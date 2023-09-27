@@ -4,6 +4,8 @@ package com.geekydroid.materialclock.application.utils
 import android.app.AlarmManager
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
+import com.geekydroid.materialclock.ui.alarm.model.AlarmActionType
+import com.geekydroid.materialclock.ui.alarm.model.AlarmType
 import java.util.Calendar
 import java.util.Date
 
@@ -17,7 +19,8 @@ object AlarmUtils {
         alarmScheduleType: AlarmScheduleType,
         alarmScheduleDays:String,
         alarmTimeMillis: Long,
-        alarmDateMillis:Long
+        alarmDateMillis:Long,
+        addNextDayIfTimeIsPast:Boolean = true
     ) : Long {
 
         /**
@@ -25,7 +28,7 @@ object AlarmUtils {
          * and Today at 08:00 the user again turns On the alarm so the time for today is already past so we are
          * scheduling the alarm for next day
          */
-        val finalAlarmTimeMillis = if (alarmTimeMillis < System.currentTimeMillis())
+        val finalAlarmTimeMillis = if (alarmTimeMillis < System.currentTimeMillis() && addNextDayIfTimeIsPast)
             getSameTimeInMillisForNextDay(alarmTimeMillis)
         else
             alarmTimeMillis
@@ -138,6 +141,34 @@ object AlarmUtils {
         return calendar.timeInMillis + Constants.ALARM_SNOOZE_INTERVAL_MILLIS
     }
 
+    fun getAlarmActionType(alarmActionTypeStr:String) : AlarmActionType {
+        return when(alarmActionTypeStr) {
+            AlarmActionType.REMINDER_DISMISS.name -> AlarmActionType.REMINDER_DISMISS
+            AlarmActionType.SNOOZE.name -> AlarmActionType.SNOOZE
+            AlarmActionType.STOP.name -> AlarmActionType.STOP
+            AlarmActionType.SNOOZE_DISMISS.name -> AlarmActionType.SNOOZE_DISMISS
+            else -> AlarmActionType.NA
+        }
+    }
 
+    fun getAlarmScheduleType(alarmScheduleTypeStr: String): AlarmScheduleType {
+        return when (alarmScheduleTypeStr) {
+            AlarmScheduleType.ONCE.name -> AlarmScheduleType.ONCE
+            AlarmScheduleType.SCHEDULE_ONCE.name -> AlarmScheduleType.SCHEDULE_ONCE
+            AlarmScheduleType.REPEATED.name -> AlarmScheduleType.REPEATED
+            else -> AlarmScheduleType.ONCE
+        }
+    }
+
+
+
+    fun getAlarmType(alarmTypeStr: String): AlarmType {
+        return when (alarmTypeStr) {
+            AlarmType.REMINDER.name -> AlarmType.REMINDER
+            AlarmType.ACTUAL.name -> AlarmType.ACTUAL
+            AlarmType.SNOOZE.name -> AlarmType.SNOOZE
+            else -> AlarmType.NA
+        }
+    }
 
 }
