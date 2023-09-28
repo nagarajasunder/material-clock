@@ -19,7 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.utils.TimerUtils
+import com.geekydroid.materialclock.ui.theme.md_theme_dark_outlineVariant
+import com.geekydroid.materialclock.ui.theme.timerInputRemovalColor
 
 @Composable
 fun TimerInputScreen(
@@ -62,12 +65,18 @@ fun TimerInputScreen(
                 items(numbers) { number ->
                     TimerInputButton(
                         modifier = Modifier.size(100.dp),
-                        text = number, onClick = {
-                            if (it == "X") {
-                                timerInput = Triple(0,0,0)
-                            }
-                            else {
-                                timerInput = TimerUtils.getTimerTextBasedOnInput(
+                        text = number,
+                        color = if (number == "X") timerInputRemovalColor else md_theme_dark_outlineVariant,
+                        iconRes = if (number == "X") R.drawable.backspace else null,
+                        onClick = {
+                            timerInput = if (it == "X") {
+                                TimerUtils.getTimerTextAfterDeletion(
+                                    hour = timerInput.first,
+                                    minute = timerInput.second,
+                                    second = timerInput.third
+                                )
+                            } else {
+                                TimerUtils.getTimerTextBasedOnInput(
                                     input = it.toInt(),
                                     hour = timerInput.first,
                                     minute = timerInput.second,

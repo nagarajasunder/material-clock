@@ -30,4 +30,25 @@ object TimerUtils {
 
     }
 
+    fun getTimerTextAfterDeletion(
+        hour: Int,
+        minute: Int,
+        second: Int
+    ) : Triple<Int,Int,Int> {
+
+
+
+        val newHr = hour/10
+        val hrReminder = hour%10
+
+        val minQuotient = minute/10
+        val newMin = (hrReminder*10) + minQuotient
+        val minReminder = minute%10
+
+        val secQuotient = second/10
+        val newSec = (minReminder*10) + secQuotient
+
+        return Triple(newHr,newMin,newSec)
+
+    }
 }

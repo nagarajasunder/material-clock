@@ -14,6 +14,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.geekydroid.materialclock.ui.theme.timerInputSelectedColor
+import com.geekydroid.materialclock.ui.theme.timerTextStyle
 
 @Composable
 fun TimerTextComponent(
@@ -53,7 +54,7 @@ fun TimerTextComponent(
                     append("s")
                 }
             },
-            style = MaterialTheme.typography.displayLarge.copy(color = Color.Gray)
+            style = timerTextStyle.copy(color = Color.Gray)
         )
     }
 
