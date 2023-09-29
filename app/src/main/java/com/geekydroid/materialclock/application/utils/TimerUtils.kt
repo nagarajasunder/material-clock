@@ -57,10 +57,9 @@ object TimerUtils {
         val newSec = second%60
         val extraMin = second/60
 
-        var newMin = minute%60
-        val extraHr = minute/60
+        val newMin = (minute+extraMin)%60
+        val extraHr = (minute+extraMin)/60
 
-        newMin+=extraMin
         val newHr = hour+extraHr
 
         return Triple(newHr,newMin,newSec)

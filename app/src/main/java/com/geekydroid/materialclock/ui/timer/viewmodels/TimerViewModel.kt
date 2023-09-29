@@ -51,7 +51,20 @@ class TimerViewModel @Inject constructor() : ViewModel(), TimerScreenActions {
     }
 
     override fun onTimerStartClicked() {
-
+        viewModelScope.launch {
+            _timerScreenState.update {
+                val newTimerText = TimerUtils.getFormattedTimerTime(
+                    hour = it.timerHr,
+                    minute = it.timerMin,
+                    second = it.timerSec
+                )
+                it.copy(
+                    timerHr = newTimerText.first,
+                    timerMin = newTimerText.second,
+                    timerSec = newTimerText.third
+                )
+            }
+        }
     }
 
 

@@ -2,12 +2,16 @@ package com.geekydroid.materialclock.ui.timer.composables
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,47 +36,55 @@ fun TimerInputButton(
     color: Color = Color.Yellow,
     @DrawableRes iconRes: Int? = null
 ) {
-    Card(
-        modifier = modifier.fillMaxSize(),
-        onClick = {
-            onClick(text)
-        },
-        shape = CircleShape,
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = color)
-        ) {
-            if (iconRes != null) {
-                Icon(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .align(Alignment.Center),
-                    painter = painterResource(id = iconRes),
-                    contentDescription = stringResource(id = R.string.backspace),
-                    tint = Color.Black
-                )
-            } else {
-                Text(
-                    text = text,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.displaySmall
-                )
-            }
-        }
-    }
+   FloatingActionButton(
+       modifier = modifier,
+       shape = CircleShape,
+       containerColor = color,
+       onClick = {
+           onClick(text)
+       }
+   ) {
+       if (iconRes != null) {
+           Icon(
+               modifier = Modifier,
+               painter = painterResource(id = iconRes),
+               contentDescription = stringResource(id = R.string.backspace),
+               tint = Color.Black
+           )
+       } else {
+           Text(
+               text = text,
+               textAlign = TextAlign.Center,
+               style = MaterialTheme.typography.headlineSmall
+           )
+       }
+   }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun TimerButtonPreview() {
-    TimerInputButton(
-        modifier = Modifier.size(100.dp),
-        iconRes = R.drawable.backspace,
-        color = timerInputRemovalColor,
-        text = "X", onClick = {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        TimerInputButton(
+            modifier = Modifier.size(100.dp),
+            iconRes = R.drawable.backspace,
+            color = timerInputRemovalColor,
+            text = "X", onClick = {
 
-        })
+            })
+        TimerInputButton(
+            modifier = Modifier.size(100.dp),
+            iconRes = R.drawable.backspace,
+            color = timerInputRemovalColor,
+            text = "X", onClick = {
+
+            })
+        TimerInputButton(
+            modifier = Modifier.size(100.dp),
+            iconRes = R.drawable.backspace,
+            color = timerInputRemovalColor,
+            text = "X", onClick = {
+
+            })
+    }
 }
