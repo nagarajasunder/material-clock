@@ -1,9 +1,6 @@
 package com.geekydroid.materialclock.application.utils
 
 object TimerUtils {
-
-
-
     fun getTimerTextBasedOnInput(
         input: Int,
         hour: Int,
@@ -49,6 +46,25 @@ object TimerUtils {
         val newSec = (minReminder*10) + secQuotient
 
         return Triple(newHr,newMin,newSec)
+
+    }
+
+    fun getFormattedTimerTime(
+        hour:Int,
+        minute:Int,
+        second: Int
+    ): Triple<Int, Int, Int> {
+        val newSec = second%60
+        val extraMin = second/60
+
+        var newMin = minute%60
+        val extraHr = minute/60
+
+        newMin+=extraMin
+        val newHr = hour+extraHr
+
+        return Triple(newHr,newMin,newSec)
+
 
     }
 }

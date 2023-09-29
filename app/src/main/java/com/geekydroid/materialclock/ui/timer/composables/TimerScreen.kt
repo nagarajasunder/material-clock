@@ -26,7 +26,8 @@ fun TimerScreen(
     TimerScreenContent(
         modifier.padding(8.dp),
         state = timerState,
-        onTimerInputChanged = timerViewModel::onTimerInputChanged
+        onTimerInputChanged = timerViewModel::onTimerInputChanged,
+        onTimerStartClicked = timerViewModel::onTimerStartClicked
     )
 
 }
@@ -35,7 +36,8 @@ fun TimerScreen(
 fun TimerScreenContent(
     modifier: Modifier = Modifier,
     state: TimerScreenState,
-    onTimerInputChanged: (String) -> Unit
+    onTimerInputChanged: (String) -> Unit,
+    onTimerStartClicked: () -> Unit
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -47,7 +49,8 @@ fun TimerScreenContent(
         }
         TimerInputScreen(
             state = state,
-            onTimerInputChanged = onTimerInputChanged
+            onTimerInputChanged = onTimerInputChanged,
+            onTimerStartClick = onTimerStartClicked
         )
     }
 }
