@@ -1,6 +1,8 @@
 package com.geekydroid.materialclock.ui.timer.composables
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,7 +46,14 @@ fun TimerCard(
     timerProgress:Float
 ) {
 
-    val timerProgressAnimated by animateFloatAsState(targetValue = timerProgress, label = "")
+    val timerProgressAnimated by animateFloatAsState(
+        targetValue = timerProgress,
+        label = "",
+        animationSpec = spring(
+            dampingRatio = 1f,
+            stiffness = Spring.StiffnessVeryLow
+        )
+    )
 
     Card(
         modifier = modifier.fillMaxWidth(),
