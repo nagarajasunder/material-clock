@@ -47,10 +47,20 @@ fun TimerScreenContent(
                 modifier = Modifier.padding(16.dp)
             )
         }
-        TimerInputScreen(
-            state = state,
-            onTimerInputChanged = onTimerInputChanged,
-            onTimerStartClick = onTimerStartClicked
-        )
+        if (state.timerStarted) {
+            TimerCard(
+                timerLabel = state.timerEvent.timerLabel,
+                timerText = state.timerEvent.timerText,
+                timerProgress = state.timerEvent.timerProgress
+            )
+        }
+        else {
+            TimerInputScreen(
+                state = state,
+                onTimerInputChanged = onTimerInputChanged,
+                onTimerStartClick = onTimerStartClicked
+            )
+        }
+
     }
 }

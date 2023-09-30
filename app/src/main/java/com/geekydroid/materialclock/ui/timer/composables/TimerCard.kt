@@ -1,11 +1,11 @@
 package com.geekydroid.materialclock.ui.timer.composables
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,25 +17,34 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.geekydroid.materialclock.R
-import com.geekydroid.materialclock.ui.theme.timerInputSelectedColor
+import com.geekydroid.materialclock.ui.theme.timerAddOneMinColor
+import com.geekydroid.materialclock.ui.theme.timerProgressColor
+import com.geekydroid.materialclock.ui.theme.timerStopButtonColor
 import com.geekydroid.materialclock.ui.theme.weekDaySelectedColor
 
 @Composable
 fun TimerCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    timerLabel:String,
+    timerText:String,
+    timerProgress:Float
 ) {
+
+    val timerProgressAnimated by animateFloatAsState(targetValue = timerProgress, label = "")
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -51,7 +60,7 @@ fun TimerCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "59m 38s Timer", style = MaterialTheme.typography.headlineSmall)
+                Text(text = timerLabel, style = MaterialTheme.typography.headlineSmall)
                 Card(
                     shape = CircleShape,
                     colors = CardDefaults.cardColors(containerColor = weekDaySelectedColor)
@@ -75,11 +84,33 @@ fun TimerCard(
                     modifier = Modifier
                         .size(250.dp),
                     strokeWidth = 12.dp,
-                    trackColor = Color.LightGray,
-                    progress = 0.7f,
+                    trackColor = Color.Gray,
+                    progress = timerProgressAnimated,
                     strokeCap = StrokeCap.Round,
-                    color = timerInputSelectedColor
+                    color = timerProgressColor
                 )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = timerText,
+                        style = MaterialTheme.typography.displayMedium,
+                        maxLines = 2
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable {
+
+                            },
+                        painter = painterResource(id = R.drawable.restart_alt_24px),
+                        contentDescription = stringResource(id = R.string.reset),
+                        tint = timerProgressColor
+                    )
+
+                }
 
             }
             Row(
@@ -93,7 +124,8 @@ fun TimerCard(
                         .fillMaxWidth()
                         .padding(4.dp),
                     onClick = { /*TODO*/ },
-                    shape = CircleShape
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = timerAddOneMinColor)
                 ) {
                     Text(
                         modifier = Modifier.padding(16.dp),
@@ -108,7 +140,7 @@ fun TimerCard(
                         .padding(4.dp),
                     onClick = { /*TODO*/ },
                     shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
+                    colors = ButtonDefaults.buttonColors(containerColor = timerStopButtonColor)
                 ) {
                     Icon(
                         modifier = Modifier.padding(20.dp),
@@ -126,5 +158,9 @@ fun TimerCard(
 @Composable
 fun TimerCardPreview() {
 
-    TimerCard()
+    TimerCard(
+        timerText = "100:59:58",
+        timerLabel = "5m Timer",
+        timerProgress = 90.0f
+    )
 }
