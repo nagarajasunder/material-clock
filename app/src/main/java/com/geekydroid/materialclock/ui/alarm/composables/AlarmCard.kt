@@ -37,7 +37,7 @@ import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.constants.Constants.alarmSoundsList
 import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
-import com.geekydroid.materialclock.ui.theme.alarmCardContainerColor
+import com.geekydroid.materialclock.ui.theme.cardContainer
 import com.geekydroid.materialclock.ui.theme.weekDaySelectedColor
 import com.geekydroid.materialclock.ui.theme.week_day_highlight_color
 
@@ -108,7 +108,7 @@ fun AlarmCard(
         .clip(MaterialTheme.shapes.extraLarge),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = alarmCardContainerColor
+            containerColor = cardContainer
         )
     ) {
         Column(

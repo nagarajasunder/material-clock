@@ -1,6 +1,5 @@
 package com.geekydroid.materialclock.ui.timer.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.geekydroid.materialclock.application.di.ApplicationScope
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val TAG = "TimerViewModel"
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
@@ -32,7 +30,6 @@ class TimerViewModel @Inject constructor(
     val timerScreenState: StateFlow<TimerScreenState> = _timerScreenState
 
     override fun onTimerInputChanged(input: String) {
-        Log.d(TAG, "onTimerInputChanged: ${viewModelScope.coroutineContext}")
         viewModelScope.launch {
             _timerScreenState.update {
                 val newTimerText = if (input == "X") {
@@ -64,18 +61,18 @@ class TimerViewModel @Inject constructor(
     override fun onTimerStartClicked() {
         viewModelScope.launch {
             _timerScreenState.update {
-                val timerSeconds = TimerUtils.convertTimerTextToSeconds(
+                val timerMillis = TimerUtils.convertTimerTextToMillis(
                     hour = it.timerHr,
                     minute = it.timerMin,
                     seconds = it.timerSec
                 )
-                val timerLabel = "${TimerUtils.getTimerTextBasedOnSeconds(timerSeconds)} Timer"
-                val timerText = TimerUtils.getTimerTextBasedOnSeconds(timerSeconds)
+                val timerLabel = "${TimerUtils.getTimerTextLabelBasedOnMillis(timerMillis)}Timer"
+                val timerText = TimerUtils.getTimerTextBasedOnMillis(timerMillis)
                 val updatedState = it.copy(
                     timerStarted = true,
                     timerEvent = TimerEvent(
-                        timerSec = timerSeconds,
-                        currentTimerSec = timerSeconds,
+                        timerMillis = timerMillis,
+                        currentTimerMillis = timerMillis,
                         timerProgress = 1f,
                         timerLabel = timerLabel,
                         timerState = TimerState.STARTED,
@@ -95,17 +92,15 @@ class TimerViewModel @Inject constructor(
                 if (_timerScreenState.value.timerEvent.timerState == TimerState.IDLE) {
                     break
                 }
+
                 _timerScreenState.update {
-                    val newTimerSeconds = it.timerEvent.currentTimerSec - 1
-                    val timerText = TimerUtils.getTimerTextBasedOnSeconds(newTimerSeconds)
-                    var timerProgress = 0f
-                    if (newTimerSeconds >= 0) {
-                        timerProgress =
-                            TimerUtils.getTimerProgress(it.timerEvent.timerSec,newTimerSeconds)
-                    }
+                    val newTimerMillis = it.timerEvent.currentTimerMillis - 1000
+                    val timerProgress: Float =
+                        TimerUtils.getTimerProgress(it.timerEvent.timerMillis, newTimerMillis)
+                    val timerText = TimerUtils.getTimerTextBasedOnMillis(newTimerMillis)
                     it.copy(
                         timerEvent = it.timerEvent.copy(
-                            currentTimerSec = newTimerSeconds,
+                            currentTimerMillis = newTimerMillis,
                             timerText = timerText,
                             timerProgress = timerProgress
                         )

@@ -3,6 +3,7 @@ package com.geekydroid.materialclock.ui.timer.composables
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.geekydroid.materialclock.R
+import com.geekydroid.materialclock.ui.theme.cardContainer
 import com.geekydroid.materialclock.ui.theme.timerAddOneMinColor
 import com.geekydroid.materialclock.ui.theme.timerProgressColor
 import com.geekydroid.materialclock.ui.theme.timerStopButtonColor
@@ -48,16 +50,19 @@ fun TimerCard(
 
     val timerProgressAnimated by animateFloatAsState(
         targetValue = timerProgress,
-        label = "",
         animationSpec = spring(
             dampingRatio = 1f,
-            stiffness = Spring.StiffnessVeryLow
-        )
+            stiffness = Spring.StiffnessLow
+        ),
+        label = ""
     )
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardContainer
+        )
     ) {
         Column(
             modifier = Modifier

@@ -1,8 +1,8 @@
 package com.geekydroid.materialclock.ui.timer.models
 
 data class TimerEvent(
-    val timerSec: Int,
-    val currentTimerSec: Int,
+    val timerMillis: Long,
+    val currentTimerMillis: Long,
     val timerProgress:Float,
     val timerState: TimerState,
     val timerText: String,
@@ -10,8 +10,8 @@ data class TimerEvent(
 ) {
     companion object {
         val initialState = TimerEvent(
-            timerSec = 0,
-            currentTimerSec = 0,
+            timerMillis = 0,
+            currentTimerMillis = 0,
             timerProgress = 1f,
             timerState = TimerState.IDLE,
             timerText = "",

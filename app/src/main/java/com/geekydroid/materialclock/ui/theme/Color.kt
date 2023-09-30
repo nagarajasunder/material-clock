@@ -74,7 +74,7 @@ val blue = Color(0xFF3250FA)
 
 val seed = Color(0xFF6750A4)
 val weekDaySelectedColor = Color(0xFFA7ECEE)
-val alarmCardContainerColor = Color(0xFF302E2E)
+val cardContainer = Color(0xFF302E2E)
 val timerInputSelectedColor = Color(0XFF7CB9E8)
 val timerInputRemovalColor = Color(0xFFB0DBFD)
 val timerAddOneMinColor = Color(0xFF007FFF)

@@ -1,6 +1,7 @@
 package com.geekydroid.materialclock.application.utils
 
 import java.lang.StringBuilder
+import kotlin.math.abs
 
 object TimerUtils {
     fun getTimerTextBasedOnInput(
@@ -68,15 +69,29 @@ object TimerUtils {
 
     }
 
-    fun getTimerTextBasedOnSeconds(seconds: Int): String {
-        val hours = seconds / 3600
-        val hrText = if (hours < 10) "0${hours}" else hours.toString()
-        val remMinutes = seconds % 3600
-        val minutes = remMinutes / 60
+    private fun getHrMinSecFromMillis(millis: Long): Triple<Int,Int,Int> {
+        val hours = millis / 3600_00_000
+        val remMinutes = millis % 3600_00_000
+        val minutes = remMinutes / 60_000
+        val remSeconds = remMinutes % 60_000
+        val seconds = remSeconds / 1000
+        return Triple(hours.toInt(),minutes.toInt(),seconds.toInt())
+    }
+
+    fun getTimerTextBasedOnMillis(millis: Long): String {
+        val absMillis = abs(millis)
+        val hrMinSec = getHrMinSecFromMillis(absMillis)
+        val hours = hrMinSec.first
+        val minutes = hrMinSec.second
+        val seconds = hrMinSec.third
+
+        val hrText = hours.toString()
         val minText = if (minutes < 10) "0${minutes}" else minutes.toString()
-        val remSeconds = remMinutes % 60
-        val secondsText = if (remSeconds < 10) "0${remSeconds}" else remSeconds.toString()
+        val secondsText = if (seconds in 0..9) "0${seconds}" else seconds.toString()
         val result = StringBuilder()
+        if (millis < 0) {
+            result.append("-")
+        }
         if (hours > 0) {
             result.append("$hrText:")
         }
@@ -84,23 +99,46 @@ object TimerUtils {
             result.append("${minText}:")
         }
         result.append(secondsText)
-
         return result.toString()
     }
 
-    fun convertTimerTextToSeconds(
+    fun getTimerTextLabelBasedOnMillis(millis: Long) : String {
+        val absMillis = abs(millis)
+        val hrMinSec = getHrMinSecFromMillis(absMillis)
+        val hours = hrMinSec.first
+        val minutes = hrMinSec.second
+        val seconds = hrMinSec.third
+
+        val hrText = hours.toString()
+        val minText = minutes.toString()
+        val secondsText = seconds.toString()
+        val result = StringBuilder()
+        if (hours > 0) {
+            result.append("${hrText}h ")
+        }
+        if (minutes > 0) {
+            result.append("${minText}m ")
+        }
+        if (seconds > 0) {
+            result.append("${secondsText}s ")
+        }
+        return result.toString()
+    }
+
+    fun convertTimerTextToMillis(
         hour: Int,
         minute: Int,
         seconds: Int
-    ): Int {
-        val hourToSec = (hour * 3600)
-        val minToSec = (minute * 60)
-        return (hourToSec + minToSec + seconds)
+    ): Long {
+        val hourToMillis = (hour * 3600_00_000L)
+        val minToMillis = (minute * 60_000L)
+        val secToMillis = (seconds*1000L)
+        return (hourToMillis + minToMillis + secToMillis)
     }
 
     fun getTimerProgress(
-        actualTimerSec: Int,
-        currentTimerSec: Int
+        actualTimerSec: Long,
+        currentTimerSec: Long
     ): Float {
         return (currentTimerSec.toFloat()/actualTimerSec.toFloat())
     }
