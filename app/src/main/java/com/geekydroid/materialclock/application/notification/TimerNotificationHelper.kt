@@ -11,6 +11,8 @@ import androidx.core.app.NotificationCompat
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.services.TimerService
+import com.geekydroid.materialclock.ui.alarm.AlarmFullScreenActivity
+import com.geekydroid.materialclock.ui.timer.TimerFullScreenActivity
 import com.geekydroid.materialclock.ui.timer.models.TimerEvent
 import com.geekydroid.materialclock.ui.timer.models.TimerState
 
@@ -116,6 +118,65 @@ object TimerNotificationHelper {
         }
 
         return notificationBuilder.build()
+    }
+
+    fun postTimeUpNotification(
+        context: Context,
+        timerEvent: TimerEvent
+    ) {
+        val stopActionIntent = Intent(context, TimerService::class.java)
+        stopActionIntent.putExtra(Constants.TIMER_ACTION_TYPE, Constants.TIMER_ACTION_RESET_TIMER)
+        val stopActionPendingIntent = PendingIntent.getService(
+            context,
+            Constants.TIMER_RESET_PENDING_INTENT_ID,
+            stopActionIntent,
+            getPendingIntentFlag()
+        )
+
+        val addMinActionIntent = Intent(context, TimerService::class.java)
+        addMinActionIntent.putExtra(Constants.TIMER_ACTION_TYPE, Constants.TIMER_ACTION_ADD_MIN)
+        val addMinActionPendingIntent = PendingIntent.getService(
+            context,
+            Constants.TIMER_ADD_TIME_PENDING_INTENT_ID,
+            addMinActionIntent,
+            getPendingIntentFlag()
+        )
+
+        val contentIntent = Intent(context, TimerFullScreenActivity::class.java)
+        val contentPendingIntent = PendingIntent.getActivity(
+            context,Constants.TIMER_TIME_UP_PENDING_INTENT_ID, contentIntent,
+            getPendingIntentFlag()
+        )
+
+
+        val timeUpNotification =
+            NotificationCompat.Builder(context, Constants.TIMER_TIME_UP_NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(context.getString(R.string.time_up))
+                .setContentText(timerEvent.timerText)
+                .setSmallIcon(R.drawable.hourglass_anim)
+                .setWhen(0)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setLocalOnly(true)
+                .setOngoing(true)
+                .setSound(null)
+                .setOnlyAlertOnce(true)
+                .setFullScreenIntent(contentPendingIntent,true)
+                .setContentIntent(contentPendingIntent)
+                .addAction(
+                    R.drawable.restart_alt_24px,
+                    context.getString(R.string.stop),
+                    stopActionPendingIntent
+                )
+                .addAction(
+                    R.drawable.baseline_add_circle_outline_24,
+                    context.getString(R.string.timer_add_time),
+                    addMinActionPendingIntent
+                ).build()
+
+        val notificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(Constants.TIMER_NOTIFICATION_ID,timeUpNotification)
+
     }
 
     fun updateTimerNotification(

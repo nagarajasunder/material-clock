@@ -18,6 +18,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -46,6 +49,7 @@ android {
             excludes.add("/META-INF/gradle/*")
             excludes.add("/META-INF/LICENSE.md")
             excludes.add("/META-INF/LICENSE-notice.md")
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
@@ -53,6 +57,10 @@ android {
 dependencies {
 
     implementation("com.google.android.material:material:1.5.0")
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.ui.graphics)
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.material.three)
     implementation(libs.androidx.activity.compose)
@@ -66,6 +74,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.compose.runtime.livedata)
+    androidTestImplementation(platform(libs.compose.bom))
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)

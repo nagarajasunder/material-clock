@@ -141,7 +141,7 @@ fun TimerCard(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                if (timerState == TimerState.STARTED) {
+                if (timerState == TimerState.STARTED || timerState == TimerState.EXCEEDED) {
                     Button(
                         modifier = Modifier
                             .weight(0.5f)

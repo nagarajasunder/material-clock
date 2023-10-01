@@ -27,7 +27,7 @@ class TimerService : Service() {
 
     @Inject
     @ApplicationScope
-    lateinit var externalScope:CoroutineScope
+    lateinit var externalScope: CoroutineScope
 
     @Inject
     @IoDispatcher
@@ -37,7 +37,6 @@ class TimerService : Service() {
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
-
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -51,21 +50,17 @@ class TimerService : Service() {
                     timerEvent,
                     timerEvent.timerText
                 )
-                startForeground(Constants.TIMER_NOTIFICATION_ID,timerNotification)
+                startForeground(Constants.TIMER_NOTIFICATION_ID, timerNotification)
                 observeTimerChanges()
             }
-        }
-        else if (timerActionType == Constants.TIMER_ACTION_PAUSE_TIMER) {
+        } else if (timerActionType == Constants.TIMER_ACTION_PAUSE_TIMER) {
             timerLogicHandler.pauseTimer()
-        }
-        else if (timerActionType == Constants.TIMER_ACTION_ADD_MIN) {
+        } else if (timerActionType == Constants.TIMER_ACTION_ADD_MIN) {
             timerLogicHandler.addOneMinuteToTimer()
-        }
-        else if (timerActionType == Constants.TIMER_ACTION_RESUME_TIMER) {
+        } else if (timerActionType == Constants.TIMER_ACTION_RESUME_TIMER) {
             timerLogicHandler.resumeTimer()
-        }
-        else if (timerActionType == Constants.TIMER_ACTION_RESET_TIMER) {
-            timerLogicHandler.resetTimer()
+        } else if (timerActionType == Constants.TIMER_ACTION_RESET_TIMER) {
+            timerLogicHandler.closeTimer()
         }
 
         return START_STICKY
@@ -74,19 +69,13 @@ class TimerService : Service() {
 
     private fun observeTimerChanges() {
         externalScope.launch(externalDispatcher) {
-            timerLogicHandler.timerEvent.collect {timerEvent ->
+            timerLogicHandler.timerEvent.collect { timerEvent ->
                 if (timerEvent.timerState == TimerState.IDLE || timerEvent.timerState == TimerState.RESET) {
                     TimerNotificationHelper.removeTimerNotification(this@TimerService)
                     stopSelf()
-                }
-                else if (timerEvent.timerState == TimerState.EXCEEDED) {
-                    TimerNotificationHelper.updateTimerNotification(
-                        this@TimerService,
-                        timerEvent,
-                        timerEvent.timerText
-                    )
-                }
-                else {
+                } else if (timerEvent.timerState == TimerState.EXCEEDED) {
+                    TimerNotificationHelper.postTimeUpNotification(this@TimerService, timerEvent)
+                } else {
                     TimerNotificationHelper.updateTimerNotification(
                         this@TimerService,
                         timerEvent,
