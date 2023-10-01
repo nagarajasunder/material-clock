@@ -1,7 +1,10 @@
 package com.geekydroid.materialclock.application.utils
 
+import android.util.Log
 import java.lang.StringBuilder
 import kotlin.math.abs
+
+private const val TAG = "TimerUtils"
 
 object TimerUtils {
     fun getTimerTextBasedOnInput(
@@ -69,9 +72,10 @@ object TimerUtils {
 
     }
 
+    //3715000
     private fun getHrMinSecFromMillis(millis: Long): Triple<Int,Int,Int> {
-        val hours = millis / 3600_00_000
-        val remMinutes = millis % 3600_00_000
+        val hours = millis / 36_00_000
+        val remMinutes = millis % 36_00_000
         val minutes = remMinutes / 60_000
         val remSeconds = remMinutes % 60_000
         val seconds = remSeconds / 1000
@@ -84,10 +88,15 @@ object TimerUtils {
         val hours = hrMinSec.first
         val minutes = hrMinSec.second
         val seconds = hrMinSec.third
-
+        Log.d(TAG, "getTimerTextBasedOnMillis: millis $millis $hrMinSec")
         val hrText = hours.toString()
-        val minText = if (minutes < 10) "0${minutes}" else minutes.toString()
-        val secondsText = if (seconds in 0..9) "0${seconds}" else seconds.toString()
+        val minText = if (hours > 0 && minutes < 9) {
+            "0${minutes}"
+        }
+        else {
+            minutes.toString()
+        }
+        val secondsText = if (minutes > 0 && seconds in (0..9)) "0${seconds}" else seconds.toString()
         val result = StringBuilder()
         if (millis < 0) {
             result.append("-")
@@ -95,7 +104,7 @@ object TimerUtils {
         if (hours > 0) {
             result.append("$hrText:")
         }
-        if (minutes > 0) {
+        if (minutes > 0 || hours > 0) {
             result.append("${minText}:")
         }
         result.append(secondsText)
@@ -130,7 +139,7 @@ object TimerUtils {
         minute: Int,
         seconds: Int
     ): Long {
-        val hourToMillis = (hour * 3600_00_000L)
+        val hourToMillis = (hour * 36_00_000L)
         val minToMillis = (minute * 60_000L)
         val secToMillis = (seconds*1000L)
         return (hourToMillis + minToMillis + secToMillis)

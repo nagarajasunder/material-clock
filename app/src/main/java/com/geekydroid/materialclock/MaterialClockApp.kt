@@ -31,8 +31,13 @@ class MaterialClockApp : Application() {
                 "All Clock Notification",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
+            val timerNotificationChannel = NotificationChannel(
+                Constants.TIMER_NOTIFICATION_CHANNEL_ID,
+                "Timer Notification Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             val notificationManager = applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannels(listOf(alarmNotificationChannel,alarmReminderNotificationChannel))
+            notificationManager.createNotificationChannels(listOf(alarmNotificationChannel,alarmReminderNotificationChannel,timerNotificationChannel))
         }
 
     }

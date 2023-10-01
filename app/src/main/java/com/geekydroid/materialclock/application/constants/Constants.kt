@@ -6,6 +6,7 @@ import com.geekydroid.materialclock.ui.alarm.model.AlarmSound
 object Constants {
 
 
+
     /**
      * This constant is to handle the default week day string if none of the week days is selected
      */
@@ -42,4 +43,17 @@ object Constants {
     const val TIMER_DEFAULT_HOUR = 0
     const val TIMER_DEFAULT_MINUTE = 0
     const val TIMER_DEFAULT_SECOND = 0
+    const val TIMER_EVENT_BUNDLE = "TIMER_EVENT_BUNDLE"
+    const val TIMER_NOTIFICATION_CHANNEL_ID = "TIMER_NOTIFICATION_CHANNEL"
+    const val TIMER_NOTIFICATION_ID = 57
+    const val TIMER_PAUSE_PENDING_INTENT_ID = 58
+    const val TIMER_ADD_TIME_PENDING_INTENT_ID = 59
+    const val TIMER_RESUME_PENDING_INTENT_ID = 60
+    const val TIMER_RESET_PENDING_INTENT_ID = 61
+    const val TIMER_ACTION_TYPE = "TIMER_ACTION_TYPE"
+    const val TIMER_ACTION_START_TIMER = "TIMER_ACTION_START_TIMER"
+    const val TIMER_ACTION_RESET_TIMER = "TIMER_ACTION_RESET_TIMER"
+    const val TIMER_ACTION_PAUSE_TIMER = "TIMER_ACTION_PAUSE_TIMER"
+    const val TIMER_ACTION_RESUME_TIMER = "TIMER_ACTION_RESUME_TIMER"
+    const val TIMER_ACTION_ADD_MIN = "TIMER_ACTION_ADD_MIN"
 }

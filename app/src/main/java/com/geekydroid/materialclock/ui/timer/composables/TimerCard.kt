@@ -1,9 +1,9 @@
 package com.geekydroid.materialclock.ui.timer.composables
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,14 +38,20 @@ import com.geekydroid.materialclock.ui.theme.cardContainer
 import com.geekydroid.materialclock.ui.theme.timerAddOneMinColor
 import com.geekydroid.materialclock.ui.theme.timerProgressColor
 import com.geekydroid.materialclock.ui.theme.timerStopButtonColor
-import com.geekydroid.materialclock.ui.theme.weekDaySelectedColor
+import com.geekydroid.materialclock.ui.timer.models.TimerState
 
 @Composable
 fun TimerCard(
     modifier: Modifier = Modifier,
-    timerLabel:String,
-    timerText:String,
-    timerProgress:Float
+    timerLabel: String,
+    timerText: String,
+    timerProgress: Float,
+    timerState: TimerState,
+    onAddOneMinuteClicked: () -> Unit,
+    onPauseTimerClicked: () -> Unit,
+    onResumeClicked: () -> Unit,
+    onCloseTimerCLicked: () -> Unit,
+    onResetTimerClicked: () -> Unit
 ) {
 
     val timerProgressAnimated by animateFloatAsState(
@@ -57,11 +63,16 @@ fun TimerCard(
         label = ""
     )
 
+    val cardBackgroundColor by animateColorAsState(
+        targetValue = if (timerState == TimerState.EXCEEDED) timerProgressColor else cardContainer,
+        label = "cardBackgroundColor"
+    )
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = cardContainer
+            containerColor = cardBackgroundColor
         )
     ) {
         Column(
@@ -75,18 +86,14 @@ fun TimerCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = timerLabel, style = MaterialTheme.typography.headlineSmall)
-                Card(
-                    shape = CircleShape,
-                    colors = CardDefaults.cardColors(containerColor = weekDaySelectedColor)
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .padding(4.dp),
-                        painter = painterResource(id = R.drawable.close_24px),
-                        contentDescription = null
-                    )
-                }
+                Icon(
+                    modifier = Modifier.clickable {
+                        onCloseTimerCLicked()
+                    },
+                    painter = painterResource(id = R.drawable.close_24px),
+                    contentDescription = null,
+                    tint = Color.LightGray
+                )
             }
             Box(
                 modifier = Modifier
@@ -113,16 +120,18 @@ fun TimerCard(
                         style = MaterialTheme.typography.displayMedium,
                         maxLines = 2
                     )
-                    Icon(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable {
-
-                            },
-                        painter = painterResource(id = R.drawable.restart_alt_24px),
-                        contentDescription = stringResource(id = R.string.reset),
-                        tint = timerProgressColor
-                    )
+                    if (timerState != TimerState.EXCEEDED) {
+                        Icon(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .clickable {
+                                    onResetTimerClicked()
+                                },
+                            painter = painterResource(id = R.drawable.restart_alt_24px),
+                            contentDescription = stringResource(id = R.string.reset),
+                            tint = timerProgressColor
+                        )
+                    }
 
                 }
 
@@ -132,33 +141,66 @@ fun TimerCard(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .fillMaxWidth()
-                        .padding(4.dp),
-                    onClick = { /*TODO*/ },
-                    shape = CircleShape,
-                    colors = ButtonDefaults.buttonColors(containerColor = timerAddOneMinColor)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = "+1:00",
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
+                if (timerState == TimerState.STARTED) {
+                    Button(
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        onClick = onAddOneMinuteClicked,
+                        shape = CircleShape,
+                        colors = ButtonDefaults.buttonColors(containerColor = timerAddOneMinColor)
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(16.dp),
+                            text = "+1:00",
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    }
                 }
                 Button(
                     modifier = Modifier
-                        .weight(0.5f)
                         .fillMaxWidth()
+                        .weight(0.5f)
                         .padding(4.dp),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        when (timerState) {
+                            TimerState.STARTED -> {
+                                onPauseTimerClicked()
+                            }
+
+                            TimerState.EXCEEDED -> {
+                                onResetTimerClicked()
+                            }
+
+                            else -> {
+                                onResumeClicked()
+                            }
+                        }
+                    },
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = timerStopButtonColor)
                 ) {
+                    val painterRes = when (timerState) {
+                        TimerState.PAUSED, TimerState.RESET -> {
+                            painterResource(id = R.drawable.baseline_play_arrow_24)
+                        }
+
+                        TimerState.EXCEEDED -> {
+                            painterResource(
+                                id = R.drawable.stop_24px
+                            )
+                        }
+
+                        else -> {
+                            painterResource(
+                                id = R.drawable.pause_24px
+                            )
+                        }
+                    }
                     Icon(
                         modifier = Modifier.padding(20.dp),
-                        painter = painterResource(id = R.drawable.pause_24px),
+                        painter = painterRes,
                         contentDescription = null,
                         tint = Color.Black
                     )
@@ -175,6 +217,12 @@ fun TimerCardPreview() {
     TimerCard(
         timerText = "100:59:58",
         timerLabel = "5m Timer",
-        timerProgress = 90.0f
+        timerState = TimerState.EXCEEDED,
+        timerProgress = 90.0f,
+        onAddOneMinuteClicked = {},
+        onPauseTimerClicked = {},
+        onResumeClicked = {},
+        onCloseTimerCLicked = {},
+        onResetTimerClicked = {}
     )
 }

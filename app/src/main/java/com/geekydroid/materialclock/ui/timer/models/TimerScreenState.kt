@@ -7,8 +7,7 @@ data class TimerScreenState(
     val timerMin:Int,
     val timerSec:Int,
     val showStartTimer:Boolean,
-    val timerStarted:Boolean,
-    val timerEvent: TimerEvent
+    val timerStarted:Boolean
 ) {
     companion object {
         val initialState  = TimerScreenState(
@@ -16,8 +15,7 @@ data class TimerScreenState(
             timerMin = Constants.TIMER_DEFAULT_MINUTE,
             timerSec = Constants.TIMER_DEFAULT_SECOND,
             showStartTimer = false,
-            timerStarted = false,
-            timerEvent = TimerEvent.initialState
+            timerStarted = false
         )
     }
 }

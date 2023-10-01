@@ -25,8 +25,8 @@ fun TimerTextComponent(
 ) {
 
     val hourColor = if (hour == 0) Color.Gray else timerInputSelectedColor
-    val minuteColor = if (minute == 0) Color.Gray else timerInputSelectedColor
-    val secondsColor = if (second == 0) Color.Gray else timerInputSelectedColor
+    val minuteColor = if (minute > 0 || hour > 0) timerInputSelectedColor else Color.Gray
+    val secondsColor = if (second > 0 || minute > 0 || hour > 0) timerInputSelectedColor else Color.Gray
 
     Row(modifier = modifier.fillMaxWidth()) {
         Text(
