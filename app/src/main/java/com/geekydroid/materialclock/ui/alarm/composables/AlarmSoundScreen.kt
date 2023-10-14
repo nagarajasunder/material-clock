@@ -42,6 +42,8 @@ import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.constants.Constants.ARG_ALARM_ID
 import com.geekydroid.materialclock.application.constants.Constants.ARG_HIDE_BOTTOM_BAR
 import com.geekydroid.materialclock.application.notification.AlarmNotificationHelper
+import com.geekydroid.materialclock.application.utils.MediaPlayerUtils
+import com.geekydroid.materialclock.application.utils.MediaType
 import com.geekydroid.materialclock.ui.alarm.viewmodel.AlarmSoundViewModel
 import com.geekydroid.materialclock.ui.theme.blue
 
@@ -92,7 +94,7 @@ fun AlarmSoundScreen(
 
     DisposableEffect(key1 = Unit, effect = {
         onDispose {
-            AlarmNotificationHelper.stopSound()
+            MediaPlayerUtils.stopSound()
         }
     })
 
@@ -136,11 +138,11 @@ fun AlarmSoundScreen(
                 AlarmSoundCard(
                     soundLabel = alarmSound.soundLabel,
                     onSoundClicked = { isPlaying ->
-                        AlarmNotificationHelper.stopSound()
+                        MediaPlayerUtils.stopSound()
                         playIndex = if (isPlaying) {
                             -1
                         } else {
-                            AlarmNotificationHelper.playSound(context,alarmSound.soundId)
+                            MediaPlayerUtils.playSound(context,alarmSound.soundId,MediaType.ALARM)
                             it
                         }
                         viewModel.updateAlarmSoundId(soundId =alarmSound.soundId)

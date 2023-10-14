@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.view.KeyEvent
 import android.widget.Toast
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.di.ApplicationScope
@@ -18,6 +17,8 @@ import com.geekydroid.materialclock.application.utils.AlarmUtils
 import com.geekydroid.materialclock.application.utils.AlarmUtils.getAlarmActionType
 import com.geekydroid.materialclock.application.utils.AlarmUtils.getAlarmScheduleType
 import com.geekydroid.materialclock.application.utils.AlarmUtils.getAlarmType
+import com.geekydroid.materialclock.application.utils.MediaPlayerUtils
+import com.geekydroid.materialclock.application.utils.MediaType
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
 import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
 import com.geekydroid.materialclock.ui.alarm.model.AlarmActionType
@@ -114,7 +115,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         alarmScheduleType = alarmScheduleType,
                         isAlarmVibrate = isAlarmVibrate
                     )
-                    AlarmNotificationHelper.playSound(context,alarmSoundId)
+                    MediaPlayerUtils.playSound(context,alarmSoundId,MediaType.ALARM)
                     vibrate(context)
                     scheduleNextAlarm(
                         context = context,
@@ -141,7 +142,7 @@ class AlarmReceiver : BroadcastReceiver() {
                         isAlarmVibrate = isAlarmVibrate
                     )
                     vibrate(context)
-                    AlarmNotificationHelper.playSound(context,alarmSoundId)
+                    MediaPlayerUtils.playSound(context,alarmSoundId,MediaType.ALARM)
                     updateSnoozeDetails(
                         alarmId = alarmId,
                         alarmScheduleType = alarmScheduleType,
@@ -175,8 +176,8 @@ class AlarmReceiver : BroadcastReceiver() {
                     )
                 }
                 AlarmActionType.SNOOZE -> {
-                    AlarmNotificationHelper.stopSound()
-                    AlarmNotificationHelper.cancelNotification(context!!,alarmId)
+                    MediaPlayerUtils.stopAlarmSound(context!!)
+                    AlarmNotificationHelper.cancelNotification(context,alarmId)
                     val snoozeTriggerMillis =  AlarmUtils.getAlarmSnoozeTime()
                     AlarmScheduler.scheduleAlarm(
                         context = context,
@@ -211,8 +212,8 @@ class AlarmReceiver : BroadcastReceiver() {
                     alarmActionFlow.alarmSnoozed()
                 }
                 AlarmActionType.STOP -> {
-                    AlarmNotificationHelper.stopSound()
-                    stopVibrate(context!!)
+                    MediaPlayerUtils.stopAlarmSound(context!!)
+                    stopVibrate(context)
                     AlarmNotificationHelper.cancelNotification(context,alarmId)
                     alarmActionFlow.alarmDismissed()
                 }

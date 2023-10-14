@@ -32,7 +32,7 @@ private const val TAG = "AlarmNotificationHelper"
 object AlarmNotificationHelper {
 
 
-    private var mediaPlayer: MediaPlayer? = null
+
 
     fun postAlarmNotification(
         context: Context,
@@ -129,10 +129,12 @@ object AlarmNotificationHelper {
                 .setWhen(0)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setLocalOnly(true)
+                .setOngoing(true)
+                .setSound(null)
+                .setOnlyAlertOnce(true)
                 .setFullScreenIntent(contentPendingIntent, true)
                 .setContentIntent(contentPendingIntent)
-                .setLocalOnly(true)
                 .addAction(
                     R.drawable.baseline_snooze_24,
                     context.getString(R.string.snooze),
@@ -143,10 +145,6 @@ object AlarmNotificationHelper {
                     context.getString(R.string.stop),
                     stopPendingIntent
                 )
-                .setOngoing(true)
-                .setDefaults(Notification.DEFAULT_LIGHTS)
-                .setSound(null)
-                .setVibrate(longArrayOf(0))
                 .build()
 
         notificationManager.notify(alarmId, notification)
@@ -285,29 +283,6 @@ object AlarmNotificationHelper {
             context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
 
-    }
-
-    fun playSound(context: Context, id: Int) {
-        mediaPlayer = MediaPlayer()
-        mediaPlayer?.setAudioAttributes(
-            AudioAttributes.Builder()
-                .setUsage(USAGE_ALARM)
-                .setContentType(CONTENT_TYPE_SONIFICATION)
-                .build()
-        )
-        @RawRes val soundFile = alarmSoundsList[id].soundFile
-        context.resources.openRawResourceFd(soundFile)?.let {
-            mediaPlayer?.setDataSource(it.fileDescriptor,it.startOffset,it.length)
-        }
-        mediaPlayer?.isLooping = true
-        mediaPlayer?.prepare()
-        mediaPlayer?.start()
-    }
-
-    fun stopSound() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
     }
 
     private fun getPendingIntentFlag(): Int {
