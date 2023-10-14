@@ -143,6 +143,7 @@ object TimerNotificationHelper {
         )
 
         val contentIntent = Intent(context, TimerFullScreenActivity::class.java)
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val contentPendingIntent = PendingIntent.getActivity(
             context,Constants.TIMER_TIME_UP_PENDING_INTENT_ID, contentIntent,
             getPendingIntentFlag()

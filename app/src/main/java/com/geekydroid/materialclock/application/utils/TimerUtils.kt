@@ -111,6 +111,34 @@ object TimerUtils {
         return result.toString()
     }
 
+    fun getTimerTextBasedOnMillisForNotification(millis: Long): String {
+        val absMillis = abs(millis)
+        val hrMinSec = getHrMinSecFromMillis(absMillis)
+        val hours = hrMinSec.first
+        val minutes = hrMinSec.second
+        val seconds = hrMinSec.third
+        Log.d(TAG, "getTimerTextBasedOnMillis: millis $millis $hrMinSec")
+        val hrText = hours.toString()
+        val minText = if (minutes < 10) {
+            "0${minutes}"
+        }
+        else {
+            minutes.toString()
+        }
+        val secondsText = if (seconds < 10) "0${seconds}" else seconds.toString()
+        val result = StringBuilder()
+        if (millis < 0) {
+            result.append("-")
+        }
+        if (hours > 0) {
+            result.append("$hrText:")
+        }
+        if (minutes > 0 || hours == 0) {
+            result.append("${minText}:")
+        }
+        result.append(secondsText)
+        return result.toString()
+    }
     fun getTimerTextLabelBasedOnMillis(millis: Long) : String {
         val absMillis = abs(millis)
         val hrMinSec = getHrMinSecFromMillis(absMillis)

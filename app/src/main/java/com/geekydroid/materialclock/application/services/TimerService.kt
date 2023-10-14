@@ -9,6 +9,7 @@ import com.geekydroid.materialclock.application.di.ApplicationScope
 import com.geekydroid.materialclock.application.di.IoDispatcher
 import com.geekydroid.materialclock.application.notification.TimerNotificationHelper
 import com.geekydroid.materialclock.application.utils.TimerLogicHandler
+import com.geekydroid.materialclock.application.utils.TimerUtils
 import com.geekydroid.materialclock.ui.timer.models.TimerEvent
 import com.geekydroid.materialclock.ui.timer.models.TimerState
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,17 +71,22 @@ class TimerService : Service() {
     private fun observeTimerChanges() {
         externalScope.launch(externalDispatcher) {
             timerLogicHandler.timerEvent.collect { timerEvent ->
-                if (timerEvent.timerState == TimerState.IDLE || timerEvent.timerState == TimerState.RESET) {
-                    TimerNotificationHelper.removeTimerNotification(this@TimerService)
-                    stopSelf()
-                } else if (timerEvent.timerState == TimerState.EXCEEDED) {
-                    TimerNotificationHelper.postTimeUpNotification(this@TimerService, timerEvent)
-                } else {
-                    TimerNotificationHelper.updateTimerNotification(
-                        this@TimerService,
-                        timerEvent,
-                        timerEvent.timerText
-                    )
+                val notificationTitle = TimerUtils.getTimerTextBasedOnMillisForNotification(timerEvent.currentTimerMillis)
+                when (timerEvent.timerState) {
+                    TimerState.IDLE, TimerState.RESET -> {
+                        TimerNotificationHelper.removeTimerNotification(this@TimerService)
+                        stopSelf()
+                    }
+                    TimerState.EXCEEDED -> {
+                        TimerNotificationHelper.postTimeUpNotification(this@TimerService, timerEvent.copy(timerText = notificationTitle))
+                    }
+                    else -> {
+                        TimerNotificationHelper.updateTimerNotification(
+                            this@TimerService,
+                            timerEvent,
+                            notificationTitle
+                        )
+                    }
                 }
             }
         }
