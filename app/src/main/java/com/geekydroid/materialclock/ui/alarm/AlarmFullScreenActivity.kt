@@ -4,12 +4,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -45,9 +47,11 @@ class AlarmFullScreenActivity : ComponentActivity() {
                 alarmActionFlow.alarmActionFlow.collect { event ->
                     when (event) {
                         AlarmActionFlowEvent.ALARM_SNOOZED -> {
+                            Toast.makeText(this@AlarmFullScreenActivity,"Alarm Snoozed",Toast.LENGTH_SHORT).show()
                             closeActivity()
                         }
                         AlarmActionFlowEvent.ALARM_DISMISSED -> {
+                            Toast.makeText(this@AlarmFullScreenActivity,"Alarm Dismissed",Toast.LENGTH_SHORT).show()
                             closeActivity()
                         }
                     }
@@ -87,6 +91,7 @@ class AlarmFullScreenActivity : ComponentActivity() {
         digitalTime: Long
     ) {
         val alarmData by alarmFullScreenViewModel.alarmData.observeAsState()
+        val context = LocalContext.current
 
         AlarmExpandedScreen(
             alarmLabel = alarmData?.alarmLabel ?: "",

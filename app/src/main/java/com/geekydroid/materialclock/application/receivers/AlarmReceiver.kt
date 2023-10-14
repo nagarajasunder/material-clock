@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.widget.Toast
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.di.ApplicationScope
 import com.geekydroid.materialclock.application.di.IoDispatcher
@@ -54,7 +53,6 @@ class AlarmReceiver : BroadcastReceiver() {
     
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent != null) {
-            Toast.makeText(context,"The Action is ${intent.action}",Toast.LENGTH_LONG).show()
             val alarmActionTypeStr = intent.getStringExtra(Constants.KEY_ALARM_ACTION_TYPE)?:""
             val alarmActionType = getAlarmActionType(alarmActionTypeStr)
             val alarmId = intent.getIntExtra(Constants.KEY_ALARM_ID, -1)
