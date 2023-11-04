@@ -8,6 +8,9 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.TaskStackBuilder
+import androidx.core.net.toUri
+import com.geekydroid.materialclock.MainActivity
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.services.TimerService
@@ -85,6 +88,18 @@ object TimerNotificationHelper {
             getPendingIntentFlag()
         )
 
+        val contentIntent = Intent(
+            Intent.ACTION_VIEW,
+            Constants.TIMER_NOTIFICATION_DEEP_LINK_URL.toUri(),
+            context,
+            MainActivity::class.java
+        )
+
+        val contentPendingIntent = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(contentIntent)
+            getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        }
+
         val notificationBuilder =
             NotificationCompat.Builder(context, Constants.TIMER_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(notificationTitle)
@@ -95,6 +110,7 @@ object TimerNotificationHelper {
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .setSound(null)
+                .setContentIntent(contentPendingIntent)
 
         if (timerEvent.timerState == TimerState.PAUSED) {
             notificationBuilder.addAction(

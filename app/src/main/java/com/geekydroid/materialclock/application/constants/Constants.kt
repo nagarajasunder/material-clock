@@ -58,4 +58,6 @@ object Constants {
     const val TIMER_ACTION_PAUSE_TIMER = "TIMER_ACTION_PAUSE_TIMER"
     const val TIMER_ACTION_RESUME_TIMER = "TIMER_ACTION_RESUME_TIMER"
     const val TIMER_ACTION_ADD_MIN = "TIMER_ACTION_ADD_MIN"
+
+    const val TIMER_NOTIFICATION_DEEP_LINK_URL = "https://materialclock.com/timer"
 }
