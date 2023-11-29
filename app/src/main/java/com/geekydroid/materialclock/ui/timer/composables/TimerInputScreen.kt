@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.ui.theme.md_theme_dark_outlineVariant
@@ -93,7 +94,7 @@ fun TimerInputScreen(
                     Icon(
                         modifier = Modifier.padding(12.dp),
                         painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                        contentDescription = null
+                        contentDescription = stringResource(id = R.string.start_timer)
                     )
                 }
             }

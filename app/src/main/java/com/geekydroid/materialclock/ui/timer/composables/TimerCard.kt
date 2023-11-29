@@ -91,7 +91,7 @@ fun TimerCard(
                         onCloseTimerCLicked()
                     },
                     painter = painterResource(id = R.drawable.close_24px),
-                    contentDescription = null,
+                    contentDescription = stringResource(id = R.string.close),
                     tint = Color.LightGray
                 )
             }
@@ -181,27 +181,28 @@ fun TimerCard(
                     shape = CircleShape,
                     colors = ButtonDefaults.buttonColors(containerColor = timerStopButtonColor)
                 ) {
-                    val painterRes = when (timerState) {
+                    var painterRes = 0
+                    var contentDescription = 0
+                    when (timerState) {
                         TimerState.PAUSED, TimerState.RESET -> {
-                            painterResource(id = R.drawable.baseline_play_arrow_24)
+                            painterRes = R.drawable.baseline_play_arrow_24
+                            contentDescription = R.string.start_timer
                         }
 
                         TimerState.EXCEEDED -> {
-                            painterResource(
-                                id = R.drawable.stop_24px
-                            )
+                            painterRes =  R.drawable.stop_24px
+                            contentDescription = R.string.stop
                         }
 
                         else -> {
-                            painterResource(
-                                id = R.drawable.pause_24px
-                            )
+                            painterRes = R.drawable.pause_24px
+                            contentDescription = R.string.pause
                         }
                     }
                     Icon(
                         modifier = Modifier.padding(20.dp),
-                        painter = painterRes,
-                        contentDescription = null,
+                        painter = painterResource(id = painterRes),
+                        contentDescription = stringResource(id = contentDescription),
                         tint = Color.Black
                     )
                 }

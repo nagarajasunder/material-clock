@@ -38,4 +38,6 @@
     <string name="resume">Resume</string>
     <string name="timer_label">Timer</string>
     <string name="title_activity_timer_full_screen">TimerFullScreenActivity</string>
+    <string name="start_timer">start_timer</string>
+    <string name="close">close</string>
 </resources>

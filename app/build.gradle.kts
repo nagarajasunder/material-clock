@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.geekydroid.materialclock.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -105,4 +105,6 @@ dependencies {
 
     androidTestImplementation(libs.mock.test)
     androidTestImplementation(libs.mock.agent)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
 }

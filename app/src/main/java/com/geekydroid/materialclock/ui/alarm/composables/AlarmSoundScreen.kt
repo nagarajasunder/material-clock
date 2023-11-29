@@ -41,7 +41,6 @@ import com.geekydroid.materialclock.R
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.constants.Constants.ARG_ALARM_ID
 import com.geekydroid.materialclock.application.constants.Constants.ARG_HIDE_BOTTOM_BAR
-import com.geekydroid.materialclock.application.notification.AlarmNotificationHelper
 import com.geekydroid.materialclock.application.utils.MediaPlayerUtils
 import com.geekydroid.materialclock.application.utils.MediaType
 import com.geekydroid.materialclock.ui.alarm.viewmodel.AlarmSoundViewModel
