@@ -40,4 +40,8 @@
     <string name="title_activity_timer_full_screen">TimerFullScreenActivity</string>
     <string name="start_timer">start_timer</string>
     <string name="close">close</string>
+    <string name="add_alarm">add alarm</string>
+    <string name="alarm_card_test_tag">alarm_card_test_tag</string>
+    <string name="dialog_ok_test_tag">dialog_ok_test_tag</string>
+    <string name="expand_or_collapse">Expand or Collapse</string>
 </resources>

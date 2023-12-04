@@ -9,8 +9,6 @@ import com.geekydroid.materialclock.ui.alarm.model.AlarmType
 import java.util.Calendar
 import java.util.Date
 
-private const val TAG = "AlarmUtils"
-
 
 object AlarmUtils {
 
@@ -108,7 +106,7 @@ object AlarmUtils {
 
     private fun getAlarmTimeForRepeatedAlarm(alarmScheduleDays:String,alarmTimeMillis:Long) : Long {
         val calendar = Calendar.getInstance()
-        var currentDayIndex = calendar[Calendar.DAY_OF_WEEK]
+        var currentDayIndex = calendar[Calendar.DAY_OF_WEEK] - 1
         var scheduleTime = System.currentTimeMillis()
         if (alarmScheduleDays[currentDayIndex].isUpperCase()) {
             return alarmTimeMillis

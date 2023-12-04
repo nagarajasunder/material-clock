@@ -2,13 +2,13 @@ package com.geekydroid.materialclock.ui.timer.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -38,11 +38,11 @@ fun TimerInputScreen(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .weight(0.2f)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Center
+            contentAlignment = Alignment.Center
         ) {
             TimerTextComponent(
                 hour = state.timerHr,
@@ -50,52 +50,47 @@ fun TimerInputScreen(
                 second = state.timerSec
             )
         }
-        LazyColumn(
+        Box(
             modifier = Modifier
-                .weight(0.6f)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .weight(0.8f),
+            contentAlignment = Alignment.Center
         ) {
-            items(numbers,key = {it.toString()}) { numberRow ->
-                LazyRow(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    items(numberRow,key = {it}) { number ->
-                        TimerInputButton(
-                            modifier = Modifier
-                                .size(72.dp)
-                                .padding(1.dp),
-                            text = number,
-                            color = if (number == "X") timerInputRemovalColor else md_theme_dark_outlineVariant,
-                            iconRes = if (number == "X") R.drawable.backspace else null,
-                            onClick = onTimerInputChanged
-                        )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                numbers.forEach { numberRow ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        numberRow.forEach { number ->
+                            TimerInputButton(
+                                modifier = Modifier
+                                    .padding(1.dp),
+                                text = number,
+                                color = if (number == "X") timerInputRemovalColor else md_theme_dark_outlineVariant,
+                                iconRes = if (number == "X") R.drawable.backspace else null,
+                                onClick = onTimerInputChanged
+                            )
+                        }
                     }
                 }
-            }
-        }
-        Column(
-            modifier = Modifier
-                .weight(0.2f)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            AnimatedVisibility(visible = state.showStartTimer) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(8.dp),
-                    onClick = onTimerStartClick,
-                    shape = CircleShape
-                ) {
-                    Icon(
-                        modifier = Modifier.padding(12.dp),
-                        painter = painterResource(id = R.drawable.baseline_play_arrow_24),
-                        contentDescription = stringResource(id = R.string.start_timer)
-                    )
+                AnimatedVisibility(visible = state.showStartTimer) {
+                    FloatingActionButton(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .padding(8.dp),
+                        onClick = onTimerStartClick,
+                        shape = CircleShape
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(12.dp),
+                            painter = painterResource(id = R.drawable.baseline_play_arrow_24),
+                            contentDescription = stringResource(id = R.string.start_timer)
+                        )
+                    }
                 }
             }
         }

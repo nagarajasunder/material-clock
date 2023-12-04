@@ -26,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -161,6 +163,7 @@ fun TimePickerDialog(
                         onClick = onCancel
                     ) { Text("Cancel") }
                     TextButton(
+                        modifier = Modifier.testTag(stringResource(id = R.string.dialog_ok_test_tag)),
                         onClick = onConfirm
                     ) { Text("OK") }
                 }

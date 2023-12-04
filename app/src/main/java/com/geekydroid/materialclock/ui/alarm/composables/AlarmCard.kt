@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -104,6 +105,7 @@ fun AlarmCard(
     )
 
     Card(modifier = modifier
+        .testTag(stringResource(id = R.string.alarm_card_test_tag))
         .fillMaxWidth()
         .clip(MaterialTheme.shapes.extraLarge),
         shape = MaterialTheme.shapes.extraLarge,
@@ -155,7 +157,7 @@ fun AlarmCard(
                         }
                         .padding(4.dp),
                     painter = painterResource(id = R.drawable.baseline_expand_circle_down_24),
-                    contentDescription = null
+                    contentDescription = stringResource(id = R.string.expand_or_collapse)
                 )
             }
             AlarmTimeText(text = alarmTime, enabled = (alarmStatus == AlarmStatus.ON), onClick = onAlarmTimeClick)

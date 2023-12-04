@@ -117,7 +117,10 @@ fun AlarmScreenContent(
                 onClick = {
                     viewModel.onAddAlarmClicked()
                 }) {
-                Icon(Icons.Default.Add, contentDescription = null)
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.add_alarm)
+                )
             }
         },
         floatingActionButtonPosition = FabPosition.Center
