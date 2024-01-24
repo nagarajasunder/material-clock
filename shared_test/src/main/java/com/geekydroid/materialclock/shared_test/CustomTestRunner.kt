@@ -1,4 +1,4 @@
-package com.geekydroid.materialclock
+package com.geekydroid.materialclock.shared_test
 
 import android.app.Application
 import android.content.Context

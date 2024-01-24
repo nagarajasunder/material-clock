@@ -29,7 +29,7 @@ class TimerViewModel @Inject constructor(
 
     private val _timerScreenState = MutableStateFlow(TimerScreenState.initialState)
     val timerScreenState: StateFlow<TimerScreenState> = _timerScreenState
-    val timerEvent = timerLogicHandler.timerEvent
+    val timerEvent : StateFlow<TimerEvent> = timerLogicHandler.timerEvent
 
     private val eventsChannel: Channel<TimerScreenEvents> = Channel()
     val events: Flow<TimerScreenEvents> = eventsChannel.receiveAsFlow()
@@ -86,7 +86,7 @@ class TimerViewModel @Inject constructor(
                     timerState = TimerState.STARTED,
                     timerText = timerText
                 )
-                eventsChannel.send(TimerScreenEvents.startTimerService(timerEvent))
+                eventsChannel.send(TimerScreenEvents.StartTimerService(timerEvent))
                 updatedState
             }
         }
@@ -105,7 +105,12 @@ class TimerViewModel @Inject constructor(
     }
 
     override fun onResetTimerClicked() {
-        timerLogicHandler.resetTimer()
+        viewModelScope.launch {
+            timerLogicHandler.resetTimer()
+            if(timerEvent.value.timerState == TimerState.EXCEEDED) {
+                eventsChannel.send(TimerScreenEvents.StopTimerSound)
+            }
+        }
     }
 
     override fun onCloseTimerClicked() {

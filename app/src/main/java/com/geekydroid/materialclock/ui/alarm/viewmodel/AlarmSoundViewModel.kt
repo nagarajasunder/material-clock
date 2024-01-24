@@ -3,7 +3,7 @@ package com.geekydroid.materialclock.ui.alarm.viewmodel
 import androidx.annotation.IntRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepository
+import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepositoryImpl
 import com.geekydroid.materialclock.ui.alarm.screenactions.AlarmSoundScreenActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AlarmSoundViewModel @Inject constructor(
-    private val repository: AlarmRepository
+    private val repository: AlarmRepositoryImpl
 ) : ViewModel(), AlarmSoundScreenActions {
 
     private var alarmId = 0

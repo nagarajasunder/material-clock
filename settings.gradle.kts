@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Material Clock"
 include(":app")
+include(":shared_test")

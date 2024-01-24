@@ -23,7 +23,7 @@ import com.geekydroid.materialclock.ui.alarm.composables.AlarmStatus
 import com.geekydroid.materialclock.ui.alarm.model.AlarmActionType
 import com.geekydroid.materialclock.ui.alarm.model.AlarmMaster
 import com.geekydroid.materialclock.ui.alarm.model.AlarmType
-import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepository
+import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepositoryImpl
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +45,7 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var externalDispatcher: CoroutineDispatcher
 
     @Inject
-    lateinit var alarmRepository: AlarmRepository
+    lateinit var alarmRepository: AlarmRepositoryImpl
 
     @Inject
     lateinit var alarmActionFlow: AlarmActionFlow

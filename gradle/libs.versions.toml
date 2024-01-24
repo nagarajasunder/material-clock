@@ -27,6 +27,8 @@ googleTruthVer = "1.1.3"
 mockkVersion = "1.13.2"
 jodaVer = "2.12.2"
 compose-bom = "2023.03.00"
+junitVersion = "4.13.2"
+materialVersion = "1.11.0"
 
 [libraries]
 android-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
@@ -76,6 +78,8 @@ mock-agent = { group = "io.mockk", name="mockk-agent", version.ref= "mockkVersio
 joda-time = { group = "joda-time", name="joda-time", version.ref = "jodaVer" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidLibrary" }

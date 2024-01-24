@@ -1,6 +1,8 @@
 package com.geekydroid.materialclock.application.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.Module
 import dagger.Provides
@@ -13,9 +15,10 @@ import javax.inject.Singleton
 @Module
 object DataModule {
 
+
     @Singleton
     @Provides
-    fun providesDatastore(@ApplicationContext context: Context) =
+    fun providesDatastore(@ApplicationContext context: Context) : DataStore<Preferences> =
         preferencesDataStore("mc_prefs").getValue(context, String::javaClass)
 
 }

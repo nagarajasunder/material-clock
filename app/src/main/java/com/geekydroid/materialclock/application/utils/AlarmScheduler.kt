@@ -75,9 +75,7 @@ object AlarmScheduler {
         )
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (canScheduleExactAlarms(alarmManager)) {
-            val alarmClockInfo = AlarmManager.AlarmClockInfo(finalAlarmTriggerMillis,alarmPendingIntent)
-            alarmManager.setAlarmClock(alarmClockInfo,alarmPendingIntent)
-            //alarmManager.setExact(AlarmManager.RTC_WAKEUP,finalAlarmTriggerMillis,alarmPendingIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,finalAlarmTriggerMillis,alarmPendingIntent)
         }
 
 
@@ -186,9 +184,7 @@ object AlarmScheduler {
         )
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (canScheduleExactAlarms(alarmManager)) {
-            //alarmManager.setExact(AlarmManager.RTC_WAKEUP,alarmTriggerMillis,alarmPendingIntent)
-            val alarmClockInfo = AlarmManager.AlarmClockInfo(alarmTriggerMillis,alarmPendingIntent)
-            alarmManager.setAlarmClock(alarmClockInfo,alarmPendingIntent)
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,alarmTriggerMillis,alarmPendingIntent)
         }
     }
 }

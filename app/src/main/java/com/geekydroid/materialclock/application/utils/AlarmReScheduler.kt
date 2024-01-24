@@ -3,8 +3,7 @@ package com.geekydroid.materialclock.application.utils
 import android.content.Context
 import com.geekydroid.materialclock.application.di.ApplicationScope
 import com.geekydroid.materialclock.application.di.IoDispatcher
-import com.geekydroid.materialclock.ui.alarm.composables.AlarmScheduleType
-import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepository
+import com.geekydroid.materialclock.ui.alarm.repository.AlarmRepositoryImpl
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 class AlarmReScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val alarmRepository: AlarmRepository,
+    private val alarmRepository: AlarmRepositoryImpl,
     @ApplicationScope private val externalScope:CoroutineScope,
     @IoDispatcher private val externalDispatcher:CoroutineDispatcher
 ) {

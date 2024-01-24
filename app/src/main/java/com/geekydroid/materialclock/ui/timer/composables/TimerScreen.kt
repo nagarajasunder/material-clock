@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.geekydroid.materialclock.application.constants.Constants
 import com.geekydroid.materialclock.application.services.TimerService
+import com.geekydroid.materialclock.application.utils.MediaPlayerUtils
 import com.geekydroid.materialclock.ui.timer.models.TimerEvent
 import com.geekydroid.materialclock.ui.timer.models.TimerScreenState
 import com.geekydroid.materialclock.ui.timer.models.TimerState
@@ -37,7 +38,7 @@ fun TimerScreen(
     LaunchedEffect(key1 = Unit) {
         timerViewModel.events.collect { event ->
             when(event) {
-                is TimerScreenEvents.startTimerService -> {
+                is TimerScreenEvents.StartTimerService -> {
                     val intent = Intent(context,TimerService::class.java)
                     intent.putExtra(Constants.TIMER_EVENT_BUNDLE,event.timerEvent)
                     intent.putExtra(Constants.TIMER_ACTION_TYPE,Constants.TIMER_ACTION_START_TIMER)
@@ -47,6 +48,10 @@ fun TimerScreen(
                     else {
                         context.startService(intent)
                     }
+                }
+
+                TimerScreenEvents.StopTimerSound -> {
+                    MediaPlayerUtils.stopTimerSound(context)
                 }
             }
         }
