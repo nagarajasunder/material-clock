@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.geekydroid.materialclock"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.geekydroid.materialclock"
@@ -61,6 +61,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.ui.graphics)
+    implementation(libs.materialIcons)
     androidTestImplementation(libs.androidx.navigation.testing)
     implementation(libs.material.three)
     implementation(libs.androidx.activity.compose)

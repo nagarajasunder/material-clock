@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,11 +34,10 @@ import com.geekydroid.materialclock.application.utils.TIME_FORMATS
 import com.geekydroid.materialclock.application.utils.TimeUtils
 import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlarmExpandedScreen(
     modifier: Modifier = Modifier,
-    digitalTime:Long,
+    digitalTime: Long,
     alarmLabel: String,
     onSnoozeClick: () -> Unit,
     onDismissClick: () -> Unit
@@ -58,94 +58,67 @@ fun AlarmExpandedScreen(
         verticalArrangement = Arrangement.Center
     ) {
         AnimatedVisibility(visible = showAlarmStatusText) {
-            Text(text = alarmStatusText, style = MaterialTheme.typography.displaySmall.copy(color = MaterialTheme.colorScheme.onBackground))
+            Text(
+                text = alarmStatusText,
+                style = MaterialTheme.typography.displaySmall.copy(color = MaterialTheme.colorScheme.onBackground)
+            )
         }
 
         AnimatedVisibility(visible = !showAlarmStatusText) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                    .background(MaterialTheme.colorScheme.background)
             ) {
-                Text(
-                    text = TimeUtils.getFormattedTime(TIME_FORMATS.HH_MM, digitalTime),
-                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground, fontSize = 36.sp),
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.alarm),
-                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = alarmLabel,
-                    style = MaterialTheme.typography.displaySmall.copy(color = MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier.padding(8.dp)
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(0.7f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .padding(horizontal = 8.dp)
-                            .clip(CircleShape)
-                            .combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    alarmStatusText = "Alarm Snoozed"
-                                    showAlarmStatusText = true
-                                    onSnoozeClick()
-                                },
-                            ),
-                        shape = CircleShape
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth(),
-                            text = stringResource(id = R.string.snooze),
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                fontSize = 36.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        )
-                    }
-
-                    Card(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .clip(CircleShape)
-                            .combinedClickable(
-                                onClick = {},
-                                onLongClick = {
-                                    alarmStatusText = "Alarm Dismissed"
-                                    showAlarmStatusText = true
-                                    onDismissClick()
-                                },
-                            ),
-                        shape = CircleShape
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth(),
-                            text = stringResource(id = R.string.dismiss),
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                fontSize = 36.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        )
-                    }
+                    Text(
+                        text = TimeUtils.getFormattedTime(TIME_FORMATS.HH_MM, digitalTime),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 36.sp
+                        ),
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.alarm),
+                        style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground),
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = alarmLabel,
+                        style = MaterialTheme.typography.displaySmall.copy(color = MaterialTheme.colorScheme.onBackground),
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+                Box(modifier = Modifier.fillMaxSize().weight(0.3f)) {
+                    AlarmSwipper(
+                        onSwipeLeft = {
+                            alarmStatusText = "Alarm Snoozed"
+                            showAlarmStatusText = true
+                            onSnoozeClick()
+                        },
+                        onSwipeRight = {
+                            alarmStatusText = "Alarm Dismissed"
+                            showAlarmStatusText = true
+                            onDismissClick()
+                        }
+                    )
                 }
             }
         }
     }
+}
 
+@Preview
+@Composable
+fun AlarmExpandedScreenPreview() {
+    AlarmExpandedScreen(digitalTime = System.currentTimeMillis(), alarmLabel = "Alarm", onSnoozeClick = { /*TODO*/ }) {
+
+    }
 }

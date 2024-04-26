@@ -44,9 +44,6 @@ fun DatePickerDialogWrapper(
     ) {
         DatePicker(
             state = datePickerState,
-            dateValidator = { date ->
-                date > System.currentTimeMillis()
-            },
             title = {
                 Text(
                     text = titleText,
