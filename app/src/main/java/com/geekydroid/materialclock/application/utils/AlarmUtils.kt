@@ -82,7 +82,7 @@ object AlarmUtils {
         return calendar.timeInMillis + AlarmManager.INTERVAL_DAY
     }
 
-    fun getDateTimeFromDateAndTime(dateMillis: Long, timeMillis: Long): Long {
+    private fun getDateTimeFromDateAndTime(dateMillis: Long, timeMillis: Long): Long {
         val dateCalendar = Calendar.getInstance()
         dateCalendar.timeInMillis = dateMillis
         val timeCalendar = Calendar.getInstance()

@@ -122,30 +122,31 @@ object AlarmNotificationHelper {
         notificationLayout.setOnClickPendingIntent(R.id.tv_stop, stopPendingIntent)
 
         val notification =
-            NotificationCompat.Builder(context, Constants.ALARM_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle(notificationTitle)
-                .setContentText(notificationDescription)
-                .setSmallIcon(R.drawable.baseline_access_alarm_24)
-                .setWhen(0)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setLocalOnly(true)
-                .setOngoing(true)
-                .setSound(null)
-                .setOnlyAlertOnce(true)
-                .setFullScreenIntent(contentPendingIntent, true)
-                .setContentIntent(contentPendingIntent)
-                .addAction(
+            NotificationCompat.Builder(context, Constants.ALARM_NOTIFICATION_CHANNEL_ID).apply {
+                setContentTitle(notificationTitle)
+                setContentText(notificationDescription)
+                setSmallIcon(R.drawable.baseline_access_alarm_24)
+                setWhen(0)
+                setPriority(NotificationCompat.PRIORITY_HIGH)
+                setCategory(NotificationCompat.CATEGORY_ALARM)
+                setLocalOnly(true)
+                setOngoing(true)
+                setSound(null)
+                setOnlyAlertOnce(true)
+                setFullScreenIntent(contentPendingIntent, true)
+                setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                setContentIntent(contentPendingIntent)
+                addAction(
                     R.drawable.baseline_snooze_24,
                     context.getString(R.string.snooze),
                     snoozePendingIntent
                 )
-                .addAction(
+                addAction(
                     R.drawable.ic_action_dismiss,
                     context.getString(R.string.stop),
                     stopPendingIntent
                 )
-                .build()
+            }.build()
 
         notificationManager.notify(alarmId, notification)
     }

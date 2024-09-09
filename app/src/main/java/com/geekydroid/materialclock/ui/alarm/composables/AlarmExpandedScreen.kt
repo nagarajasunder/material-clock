@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -96,7 +97,9 @@ fun AlarmExpandedScreen(
                         modifier = Modifier.padding(8.dp)
                     )
                 }
-                Box(modifier = Modifier.fillMaxSize().weight(0.3f)) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .weight(0.3f)) {
                     AlarmSwipper(
                         onSwipeLeft = {
                             alarmStatusText = "Alarm Snoozed"

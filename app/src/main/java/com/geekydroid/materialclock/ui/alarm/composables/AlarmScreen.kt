@@ -205,7 +205,9 @@ fun AlarmScreenContent(
                 }
             }
 
-            items(alarmData.size) { index ->
+            items(alarmData.size, key = { index ->
+                alarmData[index].alarmId
+            }) { index ->
                 val currentAlarmData = alarmData[index]
                 AlarmCard(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),

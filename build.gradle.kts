@@ -10,4 +10,5 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin).version("1.8.10").apply(false)
     alias(libs.plugins.hilt).version("2.47").apply(false)
     alias(libs.plugins.kotlin.kapt).version("1.8.10").apply(false)
+    alias(libs.plugins.android.test) apply false
 }
